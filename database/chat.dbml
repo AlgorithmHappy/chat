@@ -1,0 +1,42 @@
+Table users {
+  id uuid [pk, note: 'UUID único del usuario']
+  username varchar(50) [not null, unique, note: 'Nombre de usuario único']
+  password_hash varchar(255) [not null, note: 'Contraseña encriptada con hash seguro']
+  is_active boolean [not null, default: false, note: 'Indica si el usuario tiene una sesión activa']
+  created_at datetime [not null, default: `now()`, note: 'Fecha y hora de creación del usuario']
+
+  Note: 'Tabla que almacena la información principal de los usuarios.'
+}
+
+Table conversations {
+  id uuid [pk, note: 'UUID único de la conversación']
+  user1_id uuid [not null, ref: > users.id, note: 'ID del primer usuario en la conversación']
+  user2_id uuid [not null, ref: > users.id, note: 'ID del segundo usuario en la conversación']
+  status varchar(20) [not null, default: 'pending', note: 'Estado de la conversación: active o blocked']
+  created_at datetime [not null, default: `now()`, note: 'Fecha y hora de creación de la conversación']
+  accepted_at datetime [note: 'Fecha y hora en que la conversación fue aceptada']
+
+  Note: 'Tabla que representa las conversaciones 1 a 1 entre usuarios.'
+}
+
+Table messages {
+  id uuid [pk, note: 'UUID único del mensaje']
+  conversation_id uuid [not null, ref: > conversations.id, note: 'ID de la conversación a la que pertenece el mensaje']
+  sender_id uuid [not null, ref: > users.id, note: 'Usuario que envía el mensaje']
+  receiver_id uuid [not null, ref: > users.id, note: 'Usuario que recibe el mensaje']
+  content text [not null, note: 'Contenido del mensaje (encriptado)']
+  created_at datetime [not null, default: `now()`, note: 'Fecha y hora en que se envió el mensaje']
+  is_read boolean [not null, default: false, note: 'Indica si el receptor ya leyó el mensaje']
+
+  Note: 'Tabla que almacena los mensajes enviados entre usuarios.'
+}
+
+Table conversation_requests {
+  id uuid [pk, note: 'UUID único de la solicitud']
+  requester_id uuid [not null, ref: > users.id, note: 'Usuario que envía la solicitud de conversación']
+  target_id uuid [not null, ref: > users.id, note: 'Usuario que recibe la solicitud']
+  status varchar(20) [not null, default: 'pending', note: 'Estado de la solicitud: pending, accepted o rejected']
+  created_at datetime [not null, default: `now()`, note: 'Fecha y hora en que se creó la solicitud']
+
+  Note: 'Tabla que registra las solicitudes de conversación entre usuarios.'
+}

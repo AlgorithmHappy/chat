@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:17.5
+    container_name: db_chat
+    environment:
+      POSTGRES_DB: chat
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - .volumes/database:/var/lib/postgresql/data
+      - ./database/chat.sql:/docker-entrypoint-initdb.d/chat.sql
+  activemq:
+    image: rmohr/activemq:5.15.9-alpine
+    container_name: activemq_chat
+    ports:
+      - "61616:61616"   # Puerto TCP para clientes JMS
+      - "8161:8161"     # Consola web de administración
+    environment:
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    volumes:
+      - activemq-data:/opt/activemq/data
+
+volumes:
+  activemq-data:
