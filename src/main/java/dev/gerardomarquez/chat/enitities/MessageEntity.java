@@ -1,6 +1,6 @@
 package dev.gerardomarquez.chat.enitities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -63,12 +63,12 @@ public class MessageEntity {
     /**
      * Fecha y hora en que se envió el mensaje
      */
-    @Column(name = "created_at", nullable = false, columnDefinition = "timestamp default now()")
-    private LocalDate createdAt = LocalDate.now();
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     /**
      * Indica si el receptor ya leyó el mensaje
      */
-    @Column(name = "is_read", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_read", nullable = false)
     private Boolean isRead = false;
 }

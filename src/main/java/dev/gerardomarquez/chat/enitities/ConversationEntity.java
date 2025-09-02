@@ -1,6 +1,6 @@
 package dev.gerardomarquez.chat.enitities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
+@Table(name = "conversations")
 public class ConversationEntity {
     /**
      * UUID único de la conversación
@@ -52,20 +52,20 @@ public class ConversationEntity {
     /**
      * Estado de la conversación: active o blocked
      */
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'active'", length = 20)
+    @Column(name = "status", nullable = false, length = 20)
     private String status = "active";
 
     /**
      * Fecha y hora de creación de la conversación
      */
-    @Column(name = "created_at", nullable = false, columnDefinition = "timestamp default now()")
-    private LocalDate createdAt = LocalDate.now();
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     /**
      * Fecha y hora en que la conversación fue aceptada
      */
     @Column(name = "accepted_at", nullable = true)
-    private LocalDate acceptedAt;
+    private LocalDateTime acceptedAt;
 
     /*
      * Mensajes que se tienen en la conversacion

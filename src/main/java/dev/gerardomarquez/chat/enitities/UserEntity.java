@@ -1,6 +1,7 @@
 package dev.gerardomarquez.chat.enitities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -8,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,12 +48,15 @@ public class UserEntity {
     /**
      * Indica si el usuario tiene una sesión activa
      */
-    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = false;
 
     /**
      * Fecha y hora de creación del usuario
      */
-    @Column(name = "created_at", nullable = false, columnDefinition = "timestamp default now()")
-    private LocalDate createdAt = LocalDate.now();
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "userTwo")
+    private List<ConversationEntity> conversations;
 }
