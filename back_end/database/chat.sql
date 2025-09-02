@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2025-09-02T01:06:00.907Z
+-- Generated at: 2025-09-02T04:58:05.229Z
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY,
@@ -26,7 +26,7 @@ CREATE TABLE "messages" (
   "receiver_id" uuid NOT NULL,
   "content" text NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (now()),
-  "is_read" boolean NOT NULL, DEFAULT false
+  "is_read" boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE "conversation_requests" (
