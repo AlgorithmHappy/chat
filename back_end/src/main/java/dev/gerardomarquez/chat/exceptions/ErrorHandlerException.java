@@ -37,15 +37,7 @@ public class ErrorHandlerException {
         List<String> listErrors = ex.getBindingResult()
             .getFieldErrors()
             .stream()
-            .map(
-                it -> {
-                    return messageSource.getMessage(
-                        Constants.MSG_ERROR_BAD_REQUEST,
-                        new Object[]{it.getField(), it.getDefaultMessage() },
-                        Locale.getDefault()
-                    );
-                }
-            )
+            .map( it -> it.getDefaultMessage() )
             .collect(Collectors.toList() );
 
         GenericResponse genericResponse = GenericResponse.builder()

@@ -1,60 +1,120 @@
 package dev.gerardomarquez.services;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.gerardomarquez.configuration.PropertiesConfiguration;
 import dev.gerardomarquez.requests.InsertUserRequest;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.UserCreatedResponse;
+import dev.gerardomarquez.utils.Constants;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
+/*
+* {@inheritDoc}
+*/
 public class UsersManagerServiceImplementation implements UsersManagerServiceI{
 
+    /*
+     * Objeto que contiene las propiedades, la url y el path de consumo
+     */
+    private PropertiesConfiguration properties;
+
+    /*
+     * Constructor que inicializa las variables a ocupar
+     */
+    public UsersManagerServiceImplementation(){
+        properties = PropertiesConfiguration.getInstance();
+    }
+
+    /*
+    * {@inheritDoc}
+    */
     @Override
-    public List<String> insertOneUser(InsertUserRequest insertUserRequest) {
+    public Alert insertOneUser(String user, String password) {
         HttpClient client = HttpClient.newHttpClient();
 
         ObjectMapper mapper = new ObjectMapper();
 
-        Optional<GenericResponse<UserCreatedResponse> > genericResponse = Optional.empty();
+        String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
+            .concat(properties.get(Constants.PROPIERTIES_REST_PATH_USERS_SIGNUP) );
+
+        System.out.println(strUri);
+
+        Optional<Alert> alert = Optional.empty();
+
+        InsertUserRequest insertUserRequest = InsertUserRequest.builder()
+            .nickName(user)
+            .password(password)
+            .build();
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/users/singUp"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(insertUserRequest ) ) )
-                    .build();
+                .uri(new URI(strUri))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(insertUserRequest ) ) )
+                .build();
 
             
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if(response.statusCode() == 400){
-                GenericResponse<List<String>> responseError = mapper.readValue(response.body(), GenericResponse.class);
-                return responseError.getData();
+            System.out.println(response.statusCode() );
+
+            if(response.statusCode() == Response.Status.CREATED.getStatusCode() ){
+                GenericResponse<UserCreatedResponse> genericResponse = mapper.readValue(response.body(), GenericResponse.class);
+                Alert alertSucccess = new Alert(AlertType.CONFIRMATION);
+                alertSucccess.setTitle(Constants.MSG_CONFIRMATION_DIALOG);
+                alertSucccess.setHeaderText(Constants.MSG_NEW_USER_INSERTED_HEADER_DIALOG);
+                alertSucccess.setContentText(
+                    String.format(Constants.MSG_NEW_USER_INSERTED_TEXT_DIALOG, genericResponse.getData().getNickName() )
+                );
+                alert = Optional.of(alertSucccess);
             }
 
-            genericResponse = Optional.of(
-                mapper.readValue(response.body(), GenericResponse.class)
-            );
+            if(response.statusCode() == Response.Status.BAD_REQUEST.getStatusCode() ){
+                GenericResponse<List<String>> responseError = mapper.readValue(response.body(), GenericResponse.class);
+                String allErrors = String.join(System.lineSeparator(), responseError.getData() );
+                Alert alertError = new Alert(AlertType.ERROR);
+                alertError.setTitle(Constants.MSG_ERROR_DIALOG);
+                alertError.setHeaderText(Constants.MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG);
+                alertError.setContentText(allErrors);
+                alert = Optional.of(alertError);
+            }
 
-            if(!genericResponse.isPresent() )
-                throw new IllegalArgumentException("La data no esta presente");
+        } catch (ConnectException e){
+            Alert alertError = new Alert(AlertType.ERROR);
+            alertError.setTitle(Constants.MSG_ERROR_DIALOG);
+            alertError.setHeaderText(Constants.MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG);
+            alertError.setContentText(Constants.MSG_ERROR_NET_TEXT_DIALOG);
+            alert = Optional.of(alertError);
+
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
-        List<String> listSuccess = new ArrayList<>();
-        listSuccess.add(genericResponse.get().getMessage() );
-
-        return listSuccess;
+        if(alert.isPresent() )
+            return alert.get();
+        else {
+            Alert alertGeneralError = new Alert(AlertType.ERROR);
+            alertGeneralError.setAlertType(AlertType.ERROR);
+            alertGeneralError.setTitle(Constants.MSG_ERROR_GENERA_HEADER_DIALOG);
+            alertGeneralError.setContentText(Constants.MSG_ERROR_GENERA_TEXT_DIALOG);
+            return alertGeneralError;
+        }
     }
 
 }

@@ -23,17 +23,17 @@ public class InsertUserRequest implements Serializable {
     /*
      * Nombre de usuario
      */
-    @NotBlank
-    @NotNull
-    @Size(min = 5, max = 50)
-    @Pattern(regexp = "^[A-Za-z0-9]+$")
+    @NotBlank(message = "{InsertUserRequest.nickName.NotBlank}")
+    @NotNull(message = "{InsertUserRequest.nickName.NotNull}")
+    @Size(message = "{InsertUserRequest.nickName.Size}", min = 5, max = 50)
+    @Pattern(message = "{InsertUserRequest.nickName.Pattern}", regexp = "^[A-Za-z0-9]+$")
     private String nickName;
 
     /*
      * Contraseña
      */
-    @NotNull
-    @Size(min = 8, max = 12)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]+$")
+    @NotNull(message = "{InsertUserRequest.password.NotNull}")
+    @Size(message = "{InsertUserRequest.password.Size}", min = 8, max = 12)
+    @Pattern(message = "{InsertUserRequest.password.Pattern}", regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]+$")
     private String password;
 }

@@ -1,65 +1,61 @@
 package dev.gerardomarquez.controllers;
 
-import java.util.List;
-
-import dev.gerardomarquez.requests.InsertUserRequest;
-import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.services.UsersManagerServiceI;
 import dev.gerardomarquez.services.UsersManagerServiceImplementation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+/*
+ * Clase que controlara la vista de Login.fxml
+ */
 public class LoginController {
 
+    /*
+     * Servicio para mandar la peticion "POST" del registro de usuario
+     */
     private UsersManagerServiceI userManagerService;
 
+    /*
+     * Input texto donde el usuario ingresa su nombre de usuario
+     */
     @FXML
     private TextField textFieldUser;
 
+    /*
+     * Input texto donde el usuario ingresa su contraseña
+     */
     @FXML
     private TextField textFieldPassword;
 
+    /*
+     * Boton para registrar al usuario
+     */
     @FXML
     private Button buttonSignUp;
 
+    /*
+     * Boton para ingresar
+     */
     @FXML
     private Button buttonSignIn;
 
+    /*
+     * Metodo de java FX para incializar las variables
+     */
     @FXML
     public void initialize() {
         userManagerService = new UsersManagerServiceImplementation();
 
-        buttonSignUp.setOnAction(e -> {
-            String username = textFieldUser.getText();
-            String password = textFieldPassword.getText();
-
-            InsertUserRequest insertUserRequest = InsertUserRequest.builder()
-                .nickName(username)
-                .password(password)
-                .build();
-
-            List<String> response = userManagerService.insertOneUser(insertUserRequest);
-
-            if(!response.get(0).equals("Operación correcta.") ){
-                String error = String.join(System.lineSeparator(), response);
-
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Se produjo un error");
-                alert.setContentText(error);
-
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Confirmacion");
-                alert.setHeaderText("Nuevo usuario");
-                alert.setContentText("Se creo exitosamente el usuario");
-
+        buttonSignUp.setOnAction(
+            e -> {
+                Alert alert = userManagerService.insertOneUser(
+                    textFieldUser.getText(),
+                    textFieldPassword.getText()
+                );
                 alert.showAndWait();
             }
-        });
+        );
     }
 }

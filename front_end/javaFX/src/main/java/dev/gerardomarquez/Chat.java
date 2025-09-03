@@ -1,5 +1,6 @@
 package dev.gerardomarquez;
 
+import dev.gerardomarquez.utils.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,16 +12,19 @@ import javafx.stage.Stage;
  */
 public class Chat extends Application {
 
+    /*
+     * Inicializa la primera ventana del programa
+     */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/gerardomarquez/Login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.PATH_RESOURCES_VIEW_LOGIN) );
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
 
-        stage.setTitle("Login");
+        stage.setTitle(Constants.TITLE_LOGIN);
         stage.setScene(scene);
-        stage.setResizable(false); // evita redimensionar
+        stage.setResizable(Boolean.FALSE);
         stage.show();
     }
 
