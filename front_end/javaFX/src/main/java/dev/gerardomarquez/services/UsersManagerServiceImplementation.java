@@ -14,7 +14,10 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import dev.gerardomarquez.configuration.PropertiesConfiguration;
 import dev.gerardomarquez.requests.InsertUserRequest;
@@ -23,10 +26,12 @@ import dev.gerardomarquez.responses.UserCreatedResponse;
 import dev.gerardomarquez.utils.Constants;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import lombok.extern.log4j.Log4j2;
 
 /*
 * {@inheritDoc}
 */
+@Log4j2
 public class UsersManagerServiceImplementation implements UsersManagerServiceI{
 
     /*
@@ -49,11 +54,11 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
         HttpClient client = HttpClient.newHttpClient();
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule() );
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
             .concat(properties.get(Constants.PROPIERTIES_REST_PATH_USERS_SIGNUP) );
-
-        System.out.println(strUri);
 
         Optional<Alert> alert = Optional.empty();
 
@@ -72,10 +77,11 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
             
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println(response.statusCode() );
-
             if(response.statusCode() == Response.Status.CREATED.getStatusCode() ){
-                GenericResponse<UserCreatedResponse> genericResponse = mapper.readValue(response.body(), GenericResponse.class);
+                GenericResponse<UserCreatedResponse> genericResponse = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<UserCreatedResponse>>() {}
+                );
                 Alert alertSucccess = new Alert(AlertType.CONFIRMATION);
                 alertSucccess.setTitle(Constants.MSG_CONFIRMATION_DIALOG);
                 alertSucccess.setHeaderText(Constants.MSG_NEW_USER_INSERTED_HEADER_DIALOG);
@@ -86,7 +92,13 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
             }
 
             if(response.statusCode() == Response.Status.BAD_REQUEST.getStatusCode() ){
-                GenericResponse<List<String>> responseError = mapper.readValue(response.body(), GenericResponse.class);
+                GenericResponse<List<String>> responseError = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<List<String> > >() {}
+                );
+
+                log.error(responseError);
+
                 String allErrors = String.join(System.lineSeparator(), responseError.getData() );
                 Alert alertError = new Alert(AlertType.ERROR);
                 alertError.setTitle(Constants.MSG_ERROR_DIALOG);
@@ -95,7 +107,24 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
                 alert = Optional.of(alertError);
             }
 
+            if(response.statusCode() == Constants.HTTP_STATUS_CODE_UNPROCESSABLE_ENTITY ){
+                GenericResponse<String> responseError = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<String> >() {}
+                );
+
+                log.error(responseError);
+
+                Alert alertError = new Alert(AlertType.ERROR);
+                alertError.setTitle(Constants.MSG_ERROR_DIALOG);
+                alertError.setHeaderText(Constants.MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG);
+                alertError.setContentText(Constants.MSG_ERROR_NEW_USER_UNIQUE_CONSTRAINT_DIALOG);
+                alert = Optional.of(alertError);
+            }
+
         } catch (ConnectException e){
+            log.error(e);
+
             Alert alertError = new Alert(AlertType.ERROR);
             alertError.setTitle(Constants.MSG_ERROR_DIALOG);
             alertError.setHeaderText(Constants.MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG);
@@ -103,12 +132,13 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
             alert = Optional.of(alertError);
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage() );
         }
 
         if(alert.isPresent() )
             return alert.get();
         else {
+            log.error(Constants.MSG_ERROR_LOG_ALERT_DIALOG_IS_NOT_PRESENT);
             Alert alertGeneralError = new Alert(AlertType.ERROR);
             alertGeneralError.setAlertType(AlertType.ERROR);
             alertGeneralError.setTitle(Constants.MSG_ERROR_GENERA_HEADER_DIALOG);

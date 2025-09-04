@@ -5,7 +5,9 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +25,12 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ErrorHandlerException {
 
+    @Value("${rate.limit.refill.minutes}")
+    private String minutes;
+
+    /*
+     * Mensajes de error
+     */
     @Autowired
     private MessageSource messageSource;
 
@@ -46,8 +54,42 @@ public class ErrorHandlerException {
             .data(listErrors)
             .build();
             
-        log.error(ex.getMessage() );
+        log.error(genericResponse );
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(genericResponse);
+    }
+
+    /*
+     * Metodo que controla la excepcion de los atributos unicos en la base de datos
+     * @param DataIntegrityViolationException excepcion que arroja spring data jpa que indica que se esta repitiendo el atributo.
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<GenericResponse> handleDuplicateKey(DataIntegrityViolationException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(messageSource.getMessage(Constants.MSG_DB_CONTRAINT_UNIQUE_VIOLATED, null, Locale.getDefault() ))
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<GenericResponse> handleRateLimit(RateLimitExceededException e){
+        Object[] interpoletion = { minutes };
+        String data = messageSource.getMessage(Constants.MSG_RATE_LIMIT, interpoletion, Locale.getDefault() );
+
+        GenericResponse response = GenericResponse.builder()
+            .message(e.getMessage() )
+            .success(Boolean.FALSE)
+            .data(data)
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(Constants.HTTP_STATUS_CODE_RATE_LIMIT).body(response);
     }
 }

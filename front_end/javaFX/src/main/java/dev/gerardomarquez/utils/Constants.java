@@ -27,16 +27,20 @@ public class Constants {
      * Mensajes
      */
     public static final String MSG_CONFIRMATION_DIALOG = "Confirmación";
-    public static final String MSG_NEW_USER_INSERTED_HEADER_DIALOG = "Nuevo usuario creado";
+    public static final String MSG_NEW_USER_INSERTED_HEADER_DIALOG = "Nuevo usuario creado.";
     public static final String MSG_NEW_USER_INSERTED_TEXT_DIALOG = "¡Usuario %s creado con éxito!";
     public static final String MSG_ERROR_DIALOG = "Error";
-    public static final String MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG = "Se produjeron uno o varios errores";
+    public static final String MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG = "Se produjeron uno o varios errores.";
+    public static final String MSG_ERROR_NEW_USER_UNIQUE_CONSTRAINT_DIALOG = "El nombre de usuario ingresado ya esta registrado";
     public static final String MSG_ERROR_GENERA_HEADER_DIALOG = "Se produjo un error inesperado";
     public static final String MSG_ERROR_GENERA_TEXT_DIALOG = "Oops, algo salió mal. Contacta con el administrador para más información.";
     public static final String MSG_ERROR_NET_TEXT_DIALOG = "Oops, no se pudo conectar: revisa tu internet o intenta más tarde.";
+    public static final String MSG_ERROR_LOG_ALERT_DIALOG_IS_NOT_PRESENT = "El objeto 'Alert' no esta presnete en el optional.";
 
     /*
      * Titulos de ventanas
      */
     public static final String TITLE_LOGIN = "Ingresar / Registrarse";
+
+    public static final Integer HTTP_STATUS_CODE_UNPROCESSABLE_ENTITY = 422;
 }
