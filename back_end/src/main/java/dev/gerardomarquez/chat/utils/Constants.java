@@ -8,9 +8,18 @@ public class Constants {
     public static final String MSG_DB_CONTRAINT_UNIQUE_VIOLATED = "constaint.unique.violated";
     public static final String MSG_RATE_LIMIT = "rate.limit";
     public static final String MSG_EXCEPTION_RATE_LIMIT = "No es posible realizar otra peticion porque excedio el limite de peticions";
+    public static final String MSG_EXCEPTION_USERNAME_NOT_FOUND = "InsertUserRequest.nickName.NotFound";
+    public static final String MSG_EXCEPTION_INVALID_CREDENTIALS = "InsertUserRequest.invalid.credetials";
 
     public static final String RATE_LIMIT_PATH_ONE = "/users/singUp";
+    public static final String UNSECURITY_PATH_ONE = "users/singUp";
+    public static final String UNSECURITY_PATH_TWO = "users/singIn";
 
     public static final Integer HTTP_STATUS_CODE_RATE_LIMIT = 429;
 
+    public static final Long TIME_EXPIRATED_CONVERTER = 3600000L;
+
+    public static final String BEARER = "Bearer ";
+
+    public static final String AUTHORIZATION = "Authorization";
 }

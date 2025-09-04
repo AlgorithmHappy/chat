@@ -10,6 +10,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -69,7 +71,7 @@ public class ErrorHandlerException {
         GenericResponse response = GenericResponse.builder()
             .message(ex.getMessage() )
             .success(Boolean.FALSE)
-            .data(messageSource.getMessage(Constants.MSG_DB_CONTRAINT_UNIQUE_VIOLATED, null, Locale.getDefault() ))
+            .data(messageSource.getMessage(Constants.MSG_DB_CONTRAINT_UNIQUE_VIOLATED, null, Locale.getDefault() ) )
             .build();
 
         log.error(response );
@@ -77,19 +79,39 @@ public class ErrorHandlerException {
         return ResponseEntity.unprocessableEntity().body(response);
     }
 
-    @ExceptionHandler(RateLimitExceededException.class)
-    public ResponseEntity<GenericResponse> handleRateLimit(RateLimitExceededException e){
-        Object[] interpoletion = { minutes };
-        String data = messageSource.getMessage(Constants.MSG_RATE_LIMIT, interpoletion, Locale.getDefault() );
-
+    /*
+     * Metodo que controla la excepcion del repositorio al no encontrar al usuario con el nombre de usuario dado
+     * @param UsernameNotFoundException excepcion que arroja optinal personalizadamente para indicar que el usuario no esta presente
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<GenericResponse> handleDuplicateKey(UsernameNotFoundException ex) {
         GenericResponse response = GenericResponse.builder()
-            .message(e.getMessage() )
+            .message(ex.getMessage() )
             .success(Boolean.FALSE)
-            .data(data)
+            .data(ex.getMessage() )
             .build();
 
         log.error(response );
 
-        return ResponseEntity.status(Constants.HTTP_STATUS_CODE_RATE_LIMIT).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /*
+     * Metodo que controla la excepcion de credenciales invalidas
+     * @param AuthenticationException excepcion que arroja spring cuando las credenciales son invalidas
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<GenericResponse> handleDuplicateKey(AuthenticationException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(messageSource.getMessage(Constants.MSG_EXCEPTION_INVALID_CREDENTIALS, null, Locale.getDefault() ) )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }

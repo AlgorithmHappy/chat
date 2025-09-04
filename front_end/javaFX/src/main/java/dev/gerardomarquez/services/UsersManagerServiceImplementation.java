@@ -122,6 +122,21 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
                 alert = Optional.of(alertError);
             }
 
+            if(response.statusCode() == Response.Status.TOO_MANY_REQUESTS.getStatusCode() ){
+                GenericResponse<String> responseError = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<String> >() {}
+                );
+
+                log.error(responseError);
+
+                Alert alertError = new Alert(AlertType.ERROR);
+                alertError.setTitle(Constants.MSG_ERROR_DIALOG);
+                alertError.setHeaderText(Constants.MSG_ERROR_NEW_USER_INSERTED_HEADER_DIALOG);
+                alertError.setContentText(responseError.getData() );
+                alert = Optional.of(alertError);
+            }
+
         } catch (ConnectException e){
             log.error(e);
 

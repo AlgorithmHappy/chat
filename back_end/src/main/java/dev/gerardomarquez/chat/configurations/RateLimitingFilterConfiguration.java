@@ -1,23 +1,22 @@
 package dev.gerardomarquez.chat.configurations;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.glassfish.jaxb.runtime.v2.runtime.reflect.opt.Const;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.ErrorResponse;
+import org.springframework.http.MediaType;
 
-import dev.gerardomarquez.chat.exceptions.RateLimitExceededException;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import dev.gerardomarquez.chat.responses.GenericResponse;
 import dev.gerardomarquez.chat.utils.Constants;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -29,18 +28,15 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 
 /*
  * Clase que realiza un limite de peticiones para que no hagan ataques de
  * denegacion de servicio
  */
 @Component
-public class RateLimitingFilter implements Filter {
-
-    /*
-     * Log que escribira los errores
-     */
-    private static final Logger logger = LoggerFactory.getLogger(RateLimitingFilter.class);
+@Log4j2
+public class RateLimitingFilterConfiguration implements Filter {
 
     /*
      * Archivo properties que contiene los mensajes de error
@@ -85,7 +81,25 @@ public class RateLimitingFilter implements Filter {
         if (bucket.tryConsume(1) ) {
             chain.doFilter(request, response);
         } else {
-            throw new RateLimitExceededException(Constants.MSG_EXCEPTION_RATE_LIMIT);
+            Object[] interpoletion = { refillMinutes };
+            String data = messageSource.getMessage(Constants.MSG_RATE_LIMIT, interpoletion, Locale.getDefault() );
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            GenericResponse errorResponse = GenericResponse.builder()
+                .data(data)
+                .success(Boolean.FALSE)
+                .message(Constants.MSG_EXCEPTION_RATE_LIMIT)
+                .build();
+
+            log.error(errorResponse);
+
+            httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            httpResponse.setCharacterEncoding(StandardCharsets.UTF_8.name() );
+            httpResponse.setStatus(Constants.HTTP_STATUS_CODE_RATE_LIMIT);
+            httpResponse.getWriter().write(mapper.writeValueAsString(errorResponse) );
+            
+            return;
         }
     }
 

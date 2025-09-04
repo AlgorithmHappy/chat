@@ -1,9 +1,14 @@
 package dev.gerardomarquez.chat.srvices;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +23,7 @@ import dev.gerardomarquez.chat.utils.Constants;
  * {@inheritDoc}
  */
 @Service
-public class UsersManagerServiceImplementation implements UsersManagerServiceI{
+public class UsersManagerServiceImplementation implements UsersManagerServiceI, UserDetailsService{
 
     /*
      * Repositorio para los usuarios
@@ -76,5 +81,24 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
             .build();
 
         return genericResponse;
+    }
+
+    /*
+     * Metodo de "UserDetailsService" para autenticar al usuario
+     * @param username Nombre de usuario
+     * @return Devuelve un usario de spring especifico para la autenticacion
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Object[] interpoletion = { username };
+        String error = messageSource.getMessage(Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND, interpoletion,  Locale.getDefault() );
+
+        UserEntity userEntity = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(error) );
+
+        return User.withUsername(userEntity.getUsername() )
+                   .password(userEntity.getPasswordHash() )
+                   .authorities(Collections.emptyList() ) // o roles en lista
+                   .build();
     }
 }
