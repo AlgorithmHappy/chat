@@ -10,10 +10,12 @@ public class Constants {
     public static final String MSG_EXCEPTION_RATE_LIMIT = "No es posible realizar otra peticion porque excedio el limite de peticions";
     public static final String MSG_EXCEPTION_USERNAME_NOT_FOUND = "InsertUserRequest.nickName.NotFound";
     public static final String MSG_EXCEPTION_INVALID_CREDENTIALS = "InsertUserRequest.invalid.credetials";
+    public static final String MSG_EXCEPTION_USER_ALREADY_LOGGED = "exception.user.already.logged";
 
-    public static final String RATE_LIMIT_PATH_ONE = "/users/singUp";
-    public static final String UNSECURITY_PATH_ONE = "users/singUp";
-    public static final String UNSECURITY_PATH_TWO = "users/singIn";
+    public static final String RATE_LIMIT_PATH_ONE = "/users/signUp";
+    public static final String RATE_LIMIT_PATH_TWO = "/users/signIn";
+    public static final String UNSECURITY_PATH_ONE = "users/signUp";
+    public static final String UNSECURITY_PATH_TWO = "users/signIn";
 
     public static final Integer HTTP_STATUS_CODE_RATE_LIMIT = 429;
 

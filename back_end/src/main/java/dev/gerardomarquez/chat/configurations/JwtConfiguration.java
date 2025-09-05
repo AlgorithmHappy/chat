@@ -1,8 +1,6 @@
 package dev.gerardomarquez.chat.configurations;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import dev.gerardomarquez.chat.utils.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 

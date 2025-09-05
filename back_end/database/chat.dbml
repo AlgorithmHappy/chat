@@ -2,7 +2,7 @@ Table users {
   id uuid [pk, note: 'UUID único del usuario']
   username varchar(50) [not null, unique, note: 'Nombre de usuario único']
   password_hash varchar(255) [not null, note: 'Contraseña encriptada con hash seguro']
-  is_active boolean [not null, default: false, note: 'Indica si el usuario tiene una sesión activa']
+  last_login timestamp [note: 'Indica la fecha del ultimo ingreso']
   created_at timestamp [not null, default: `now()`, note: 'Fecha y hora de creación del usuario']
 
   Note: 'Tabla que almacena la información principal de los usuarios.'

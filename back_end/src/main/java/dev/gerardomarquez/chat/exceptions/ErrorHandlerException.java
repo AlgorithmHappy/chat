@@ -103,7 +103,16 @@ public class ErrorHandlerException {
      * @return Response generico con los errores
      */
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<GenericResponse> handleDuplicateKey(AuthenticationException ex) {
+    public ResponseEntity<GenericResponse> handleAuthenticationException(AuthenticationException ex) {
+
+        /*
+         * Si la excepcion es porque ya se logeo anteriormente
+         */
+        if(ex.getCause() instanceof UserAlreadyLoggedInException){
+            UserAlreadyLoggedInException exception = new UserAlreadyLoggedInException(ex.getMessage() );
+            return this.handleUserAlreadyLogged(exception );
+        }
+
         GenericResponse response = GenericResponse.builder()
             .message(ex.getMessage() )
             .success(Boolean.FALSE)
@@ -112,6 +121,24 @@ public class ErrorHandlerException {
 
         log.error(response );
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    /*
+     * Metodo que controla la excepcion de que el usuario ya tiene una sesion activa
+     * @param UserAlreadyLoggedInException excepcion personalizada cuando el usuario intenta volver a logears cuando ya esta activo
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(UserAlreadyLoggedInException.class)
+    public ResponseEntity<GenericResponse> handleUserAlreadyLogged(UserAlreadyLoggedInException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }

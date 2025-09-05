@@ -72,7 +72,7 @@ public class RateLimitingFilterConfiguration implements Filter {
 
         String uri = httpRequest.getRequestURI();
 
-        if(!uri.equals(Constants.RATE_LIMIT_PATH_ONE) ){
+        if(!(uri.equals(Constants.RATE_LIMIT_PATH_ONE) || uri.equals(Constants.RATE_LIMIT_PATH_TWO) ) ){
             chain.doFilter(request, response);
         }
 

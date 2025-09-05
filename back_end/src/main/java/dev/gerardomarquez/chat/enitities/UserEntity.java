@@ -46,10 +46,10 @@ public class UserEntity {
     private String passwordHash;
 
     /**
-     * Indica si el usuario tiene una sesión activa
+     * Indica el ultimo inicio de sesion
      */
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = false;
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     /**
      * Fecha y hora de creación del usuario

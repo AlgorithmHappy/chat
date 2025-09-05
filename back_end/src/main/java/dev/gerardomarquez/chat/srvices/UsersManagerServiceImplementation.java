@@ -1,9 +1,11 @@
 package dev.gerardomarquez.chat.srvices;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.gerardomarquez.chat.enitities.UserEntity;
+import dev.gerardomarquez.chat.exceptions.UserAlreadyLoggedInException;
 import dev.gerardomarquez.chat.repositories.UsersRepository;
 import dev.gerardomarquez.chat.requests.InsertUserRequest;
 import dev.gerardomarquez.chat.responses.GenericResponse;
@@ -40,6 +43,9 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
      */
     private final MessageSource messageSource;
 
+    @Value("${jwt.hours.time}")
+    private Integer hoursSession;
+
     /*
      * Constructor que inyecta los atributos con spring
      * @param usersRepository Repositorio para los usuarios
@@ -63,7 +69,6 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
         UserEntity userEntity = UserEntity.builder()
             .username(insertUserRequest.getNickName() )
             .passwordHash(passwordEncoder.encode(insertUserRequest.getPassword() ) )
-            .isActive(Boolean.FALSE)
             .createdAt(LocalDateTime.now() )
             .build();
 
@@ -90,11 +95,29 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Object[] interpoletion = { username };
-        String error = messageSource.getMessage(Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND, interpoletion,  Locale.getDefault() );
 
         UserEntity userEntity = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(error) );
+            .orElseThrow(() -> new UsernameNotFoundException(
+                messageSource.getMessage(Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND, new Object[]{ username },  Locale.getDefault() )
+            ) 
+        );
+
+        if(userEntity.getLastLogin() != null){
+            LocalDateTime sessionExpired = userEntity.getLastLogin().plusHours(hoursSession);
+            if(LocalDateTime.now().isBefore(sessionExpired) ){
+                Duration duration = Duration.between(LocalDateTime.now(), sessionExpired);
+                throw new UserAlreadyLoggedInException(
+                    messageSource.getMessage(
+                        Constants.MSG_EXCEPTION_USER_ALREADY_LOGGED,
+                        new Object[]{ username, duration.toMinutes() },
+                        Locale.getDefault()
+                    )
+                );
+            }
+        }
+
+        userEntity.setLastLogin(LocalDateTime.now() );
+        usersRepository.save(userEntity);
 
         return User.withUsername(userEntity.getUsername() )
                    .password(userEntity.getPasswordHash() )

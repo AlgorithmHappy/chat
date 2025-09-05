@@ -56,7 +56,7 @@ public class UsersManagerController {
      * @param request Request con el usuario y la contraseña
      * @return Response generico con el nombre de usuario y la fecha de creacion
      */
-    @PostMapping("singUp")
+    @PostMapping("signUp")
     public ResponseEntity<GenericResponse> signUp(@Valid @RequestBody InsertUserRequest request) {
         GenericResponse response = usersManagerService.insertOneUser(request);
         
@@ -68,7 +68,7 @@ public class UsersManagerController {
      * @param request Request con el usuario y la contraseña
      * @return Response generico con el nombre de usuario y la fecha de creacion
      */
-    @PostMapping("singIn")
+    @PostMapping("signIn")
     public ResponseEntity<GenericResponse> signIn(@Valid @RequestBody InsertUserRequest request) {        
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getNickName(), request.getPassword() ) );
         String token = jwtService.generateToken(request.getNickName() );

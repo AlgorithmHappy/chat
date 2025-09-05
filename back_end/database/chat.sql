@@ -6,7 +6,7 @@ CREATE TABLE "users" (
   "id" uuid PRIMARY KEY,
   "username" varchar(50) UNIQUE NOT NULL,
   "password_hash" varchar(255) NOT NULL,
-  "is_active" boolean NOT NULL DEFAULT false,
+  "last_login" timestamp,
   "created_at" timestamp NOT NULL DEFAULT (now())
 );
 
@@ -45,7 +45,7 @@ COMMENT ON COLUMN "users"."username" IS 'Nombre de usuario único';
 
 COMMENT ON COLUMN "users"."password_hash" IS 'Contraseña encriptada con hash seguro';
 
-COMMENT ON COLUMN "users"."is_active" IS 'Indica si el usuario tiene una sesión activa';
+COMMENT ON COLUMN "users"."last_login" IS 'Indica la fecha del ultimo ingreso';
 
 COMMENT ON COLUMN "users"."created_at" IS 'Fecha y hora de creación del usuario';
 
