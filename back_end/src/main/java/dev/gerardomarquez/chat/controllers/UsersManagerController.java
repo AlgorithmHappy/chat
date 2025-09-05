@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -82,9 +83,14 @@ public class UsersManagerController {
         return ResponseEntity.ok().body(response);
     }
     
-    @GetMapping("prueba")
-    public String getMethodName() {
-        return "prueba";
+    /*
+     * Metodo para cerrar la sesion
+     */
+    @GetMapping("logOut")
+    public ResponseEntity<Void> logOut(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(Constants.BEARER.length() );
+        usersManagerService.resetDateByUsuer(token);
+        return ResponseEntity.noContent().build();
     }
     
 }

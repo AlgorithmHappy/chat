@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import dev.gerardomarquez.chat.configurations.JwtConfiguration;
 import dev.gerardomarquez.chat.enitities.UserEntity;
 import dev.gerardomarquez.chat.exceptions.UserAlreadyLoggedInException;
 import dev.gerardomarquez.chat.repositories.UsersRepository;
@@ -39,6 +41,11 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
     private final PasswordEncoder passwordEncoder;
 
     /*
+     * Objeto para deserializar el token o crear el token
+     */
+    private final JwtConfiguration jwtConfiguration;
+
+    /*
      * Objeto que gestiona los mensajes
      */
     private final MessageSource messageSource;
@@ -50,15 +57,19 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
      * Constructor que inyecta los atributos con spring
      * @param usersRepository Repositorio para los usuarios
      * @param passwordEncoder Objeto de spring para hashear la contraseña
+     * @param messageSource Gestor de mensajes de error o informacion
+     * @param jwtConfiguration Clase para crear o deserializar el token
      */
     public UsersManagerServiceImplementation(
         UsersRepository usersRepository,
         PasswordEncoder passwordEncoder,
-        MessageSource messageSource
+        MessageSource messageSource,
+        JwtConfiguration jwtConfiguration
     ){
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
         this.messageSource = messageSource;
+        this.jwtConfiguration = jwtConfiguration;
     }
 
     /*
@@ -89,10 +100,8 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
     }
 
     /*
-     * Metodo de "UserDetailsService" para autenticar al usuario
-     * @param username Nombre de usuario
-     * @return Devuelve un usario de spring especifico para la autenticacion
-     */
+    * {@inheritDoc}
+    */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -123,5 +132,20 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI, 
                    .password(userEntity.getPasswordHash() )
                    .authorities(Collections.emptyList() ) // o roles en lista
                    .build();
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void resetDateByUsuer(String token) {
+        String user = jwtConfiguration.extractUsername(token);
+        Optional<UserEntity> optionalUserEntity = usersRepository.findByUsername(user);
+
+        if(optionalUserEntity.isPresent() ){
+            UserEntity userEntity = optionalUserEntity.get();
+            userEntity.setLastLogin(null);
+            usersRepository.save(userEntity);
+        }
     }
 }

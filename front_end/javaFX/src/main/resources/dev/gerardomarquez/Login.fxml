@@ -39,7 +39,7 @@
                   <HBox alignment="CENTER" spacing="15.0">
                      <children>
                         <Button fx:id="buttonSignUp" mnemonicParsing="false" onAction="#buttonSignUpOnAction" prefWidth="90.0" text="Registrarse" />
-                        <Button fx:id="buttonSignIn" mnemonicParsing="false" prefWidth="90.0" text="Ingresar" />
+                        <Button fx:id="buttonSignIn" mnemonicParsing="false" onAction="#buttonSignInOnAction" prefWidth="90.0" text="Ingresar" />
                      </children>
                   </HBox>
                </children>

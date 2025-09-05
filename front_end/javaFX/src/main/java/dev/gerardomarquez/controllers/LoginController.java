@@ -1,7 +1,11 @@
 package dev.gerardomarquez.controllers;
 
+import java.io.IOException;
+
+import dev.gerardomarquez.dtos.PassLoginViewDto;
 import dev.gerardomarquez.services.UsersManagerServiceI;
 import dev.gerardomarquez.services.UsersManagerServiceImplementation;
+import dev.gerardomarquez.viewmanager.SceneViewManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -78,9 +82,37 @@ public class LoginController {
     @FXML
     private void buttonSignUpOnAction(){
         Alert alert = userManagerService.insertOneUser(
-                textFieldUser.getText(),
-                textFieldPassword.getText()
-            );
+            textFieldUser.getText(),
+            textFieldPassword.getText()
+        );
         alert.showAndWait();
+    }
+
+    /*
+     * Metodo que se ejecuta cuando se presiona el boton de signIn
+     */
+    @FXML
+    private void buttonSignInOnAction(){
+        PassLoginViewDto passLoginView = userManagerService.login(
+            textFieldUser.getText(),
+            textFieldPassword.getText()
+        );
+
+        if(!passLoginView.getSuccess() ){
+            passLoginView.getAlert().get().show();
+            return;
+        }
+
+        try {
+            SceneViewManager.changeScene(
+                passLoginView.getNewFxmlPath().get(),
+                passLoginView.getNewWindowTitle().get(),
+                () -> {
+                    userManagerService.logout(passLoginView.getToken().get() );
+                }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
