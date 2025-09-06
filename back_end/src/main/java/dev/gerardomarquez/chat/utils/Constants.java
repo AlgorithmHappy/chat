@@ -11,6 +11,10 @@ public class Constants {
     public static final String MSG_EXCEPTION_USERNAME_NOT_FOUND = "InsertUserRequest.nickName.NotFound";
     public static final String MSG_EXCEPTION_INVALID_CREDENTIALS = "InsertUserRequest.invalid.credetials";
     public static final String MSG_EXCEPTION_USER_ALREADY_LOGGED = "exception.user.already.logged";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_NAME_NOT_FOUND = "exception.request.conversation.username.notFound";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_PENDING_FOUND = "exception.request.conversation.pending.found";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_LIMIT_REJECTED = "exception.request.conversation.limit.rejected";
+    public static final String MSG_REQUEST_CONVERSATION_MESSAGE = "request.conversation.message";
 
     public static final String RATE_LIMIT_PATH_ONE = "/users/signUp";
     public static final String RATE_LIMIT_PATH_TWO = "/users/signIn";
@@ -24,4 +28,19 @@ public class Constants {
     public static final String BEARER = "Bearer ";
 
     public static final String AUTHORIZATION = "Authorization";
+
+    /*
+     * Constantes del estatus de peticiones conversaciones
+     */
+    public static final String CONVERSATION_REQUEST_STATUS_ONE = "pending";
+    public static final String CONVERSATION_REQUEST_STATUS_TWO = "accepted";
+    public static final String CONVERSATION_REQUEST_STATUS_THREE = "rejected";
+
+    // Limite de rechazos para no volver a recivir solucitudes de conversacion
+    public static final Long CONVERSATION_REQUEST_LIMIT = 3L;
+
+    /*
+     * JMS
+     */
+    public static final String JMS_PROPERTI_KEY_ID_USER = "idUser";
 }

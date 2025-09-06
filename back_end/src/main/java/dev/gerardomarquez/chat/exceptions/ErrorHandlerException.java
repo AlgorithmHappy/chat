@@ -141,4 +141,22 @@ public class ErrorHandlerException {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+
+    /*
+     * Metodo que controla la excepcion de que el usuario ya tiene una sesion activa
+     * @param UserAlreadyLoggedInException excepcion personalizada cuando el usuario intenta volver a logears cuando ya esta activo
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GenericResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }
