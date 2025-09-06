@@ -15,6 +15,7 @@ public class Constants {
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_PENDING_FOUND = "exception.request.conversation.pending.found";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_LIMIT_REJECTED = "exception.request.conversation.limit.rejected";
     public static final String MSG_REQUEST_CONVERSATION_MESSAGE = "request.conversation.message";
+    public static final String MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS = "request.conversation.response.success";
 
     public static final String RATE_LIMIT_PATH_ONE = "/users/signUp";
     public static final String RATE_LIMIT_PATH_TWO = "/users/signIn";

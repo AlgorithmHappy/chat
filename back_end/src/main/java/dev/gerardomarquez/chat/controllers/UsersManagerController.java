@@ -85,6 +85,8 @@ public class UsersManagerController {
     
     /*
      * Metodo para cerrar la sesion
+     * @param authHeader Encabezado con el token de autorizacion
+     * @return Response vacio porque devuelve un http status noContent
      */
     @GetMapping("logOut")
     public ResponseEntity<Void> logOut(@RequestHeader("Authorization") String authHeader) {

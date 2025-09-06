@@ -143,12 +143,12 @@ public class ErrorHandlerException {
     }
 
     /*
-     * Metodo que controla la excepcion de que el usuario ya tiene una sesion activa
-     * @param UserAlreadyLoggedInException excepcion personalizada cuando el usuario intenta volver a logears cuando ya esta activo
+     * Metodo que controla la excepcion cuando el receptor de la peticion de conversacion no fue encontrado
+     * @param IllegalArgumentException excepcion cuando el usuario que recive la peticion de conversacion no fue encontrada
      * @return Response generico con los errores
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<GenericResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<GenericResponse> handleIllegalArgument(IllegalArgumentException ex) {
         GenericResponse response = GenericResponse.builder()
             .message(ex.getMessage() )
             .success(Boolean.FALSE)
@@ -158,5 +158,23 @@ public class ErrorHandlerException {
         log.error(response );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /*
+     * Metodo que controla la excepcion cuando el receptor de la peticion de conversacion no fue encontrado
+     * @param IllegalArgumentException excepcion cuando el usuario que recive la peticion de conversacion no fue encontrada
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(TooManyConversationRequestsException.class)
+    public ResponseEntity<GenericResponse> handleTooManyConversationRequests(TooManyConversationRequestsException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
 }

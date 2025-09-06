@@ -103,7 +103,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
             .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) );
 
         if(areTherePendings){
-            throw new IllegalArgumentException(
+            throw new TooManyConversationRequestsException(
                 messageSource.getMessage(
                     Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_PENDING_FOUND,
                     null,
@@ -154,7 +154,12 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         GenericResponse response = GenericResponse.builder()
             .success(Boolean.TRUE)
             .message(messageSource.getMessage(Constants.MSG_SUCCESS, null, Locale.getDefault() ) )
-            .data(sendQueueRequest)
+            .data(messageSource.getMessage(
+                    Constants.MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS,
+                    null,
+                    Locale.getDefault() 
+                )
+            )
             .build();
 
         return response;
