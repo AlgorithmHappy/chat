@@ -1,7 +1,5 @@
 package dev.gerardomarquez.chat.jms;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -34,12 +32,14 @@ public class ConversationRequestJmsImplementation implements ConversationRequest
     /*
      * Constructor para injectar el JmsTemplate
      * @param jmsTemplate Objeto para enviar las colas
+     * @param Objeto para convertir a json
      */
     public ConversationRequestJmsImplementation(
-        JmsTemplate jmsTemplate
+        JmsTemplate jmsTemplate,
+        ObjectMapper objectMapper
     ){
         this.jmsTemplate = jmsTemplate;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = objectMapper;
     }
 
     /*

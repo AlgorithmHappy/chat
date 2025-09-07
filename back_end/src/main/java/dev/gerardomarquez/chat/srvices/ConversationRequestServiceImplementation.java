@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import dev.gerardomarquez.chat.configurations.JwtConfiguration;
-import dev.gerardomarquez.chat.enitities.ConversationEntity;
 import dev.gerardomarquez.chat.enitities.ConversationRequestEntity;
 import dev.gerardomarquez.chat.enitities.UserEntity;
+import dev.gerardomarquez.chat.exceptions.SameUserToRequestException;
 import dev.gerardomarquez.chat.exceptions.TooManyConversationRequestsException;
 import dev.gerardomarquez.chat.jms.ConversationRequestJmsI;
 import dev.gerardomarquez.chat.repositories.ConversationRequestRepository;
@@ -82,6 +81,16 @@ public class ConversationRequestServiceImplementation implements ConversationReq
     public GenericResponse insertOneRequestConversation(InsertRequestConversatinRequest requst, String token) {
         String requestedUserName = jwtConfiguration.extractUsername(token);
         String targetUsernName = requst.getUserNameTarget();
+
+        if(requestedUserName.equals(targetUsernName) ){
+            throw new SameUserToRequestException(
+                messageSource.getMessage(
+                    Constants.MSG_REQUEST_CONVERSATION_SAME_USER,
+                    null,
+                    Locale.getDefault()
+                )
+            );
+        }
 
         Optional<UserEntity> optionalRequestedEntity = usersRepository.findByUsername(requestedUserName);
         Optional<UserEntity> optionalTargetEntity = usersRepository.findByUsername(targetUsernName);

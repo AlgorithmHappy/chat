@@ -177,4 +177,22 @@ public class ErrorHandlerException {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
+
+    /*
+     * Metodo que controla la excepcion cuando se quieren enviar una solicitud de conversacion asi mismos
+     * @param SameUserToRequestException excepcion cuando el usuario se quiere mandar una solicitud asi mismo
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(SameUserToRequestException.class)
+    public ResponseEntity<GenericResponse> handleSameUserToRequest(SameUserToRequestException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+    }
 }

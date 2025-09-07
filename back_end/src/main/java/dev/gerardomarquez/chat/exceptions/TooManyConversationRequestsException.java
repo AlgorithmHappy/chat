@@ -8,7 +8,7 @@ public class TooManyConversationRequestsException extends RuntimeException {
     
     /*
      * Constructor que ejecuta a el pader, solo seteamos el mensaje de error
-     * @para Mensaje de error
+     * @param Mensaje de error
      */
     public TooManyConversationRequestsException(String message){
         super(message);

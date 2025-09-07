@@ -47,16 +47,31 @@ public class SceneViewManager {
      * @throw IOException excepcion que lanza si no encuentra la vista fxml
      */
     public static void changeScene(String fxmlPath, String title, Runnable onClose) throws IOException {
-        Parent root = FXMLLoader.load(SceneViewManager.class.getResource(fxmlPath));
-        stage.setScene(new Scene(root));
+        Parent root = FXMLLoader.load(SceneViewManager.class.getResource(fxmlPath) );
+        stage.setScene(new Scene(root) );
         stage.setResizable(false);
         stage.setTitle(title);
 
         if (onClose != null) {
-            stage.setOnCloseRequest(e -> onClose.run());
+            stage.setOnCloseRequest(e -> onClose.run() );
         }
 
         stage.show();
+    }
+
+    /*
+    * Abrir nueva ventana sin cerrar la principal
+    * @param fxmlPath ruta del fxml
+    * @param title título de la nueva ventana
+    * @throws IOException si no encuentra el FXML
+    */
+    public static void openNewWindow(String fxmlPath, String title) throws IOException {
+        Parent root = FXMLLoader.load(SceneViewManager.class.getResource(fxmlPath) );
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(root) );
+        newStage.setResizable(false);
+        newStage.setTitle(title);
+        newStage.show();
     }
 
 }

@@ -6,14 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * Clase que se recive por parte del front end para la solicitud de una conversacion
  */
-@Builder
 @Data
+@NoArgsConstructor
 public class InsertRequestConversatinRequest implements Serializable {
 
     /*
