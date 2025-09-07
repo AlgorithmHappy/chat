@@ -6,6 +6,8 @@ import dev.gerardomarquez.dtos.PassLoginViewDto;
 import dev.gerardomarquez.services.UsersManagerServiceI;
 import dev.gerardomarquez.services.UsersManagerServiceImplementation;
 import dev.gerardomarquez.viewmanager.SceneViewManager;
+import dev.gerardomarquez.utils.UserInformation;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -60,6 +62,11 @@ public class LoginController {
     private PasswordField passwordField;
 
     /*
+     * Objeto al que le setearemos el token
+     */
+    private UserInformation userInformation;
+
+    /*
      * Metodo de java FX para incializar las variables
      */
     @FXML
@@ -74,6 +81,7 @@ public class LoginController {
 
         textFieldPassword.textProperty().bindBidirectional(passwordField.textProperty() );
 
+        userInformation = UserInformation.getInstancia();
     }
 
     /*
@@ -104,6 +112,7 @@ public class LoginController {
         }
 
         try {
+            userInformation.setToke(passLoginView.getToken().get() );
             SceneViewManager.changeScene(
                 passLoginView.getNewFxmlPath().get(),
                 passLoginView.getNewWindowTitle().get(),

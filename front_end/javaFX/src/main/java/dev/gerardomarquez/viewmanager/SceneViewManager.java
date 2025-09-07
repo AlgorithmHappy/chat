@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 /*
@@ -63,9 +64,10 @@ public class SceneViewManager {
     * Abrir nueva ventana sin cerrar la principal
     * @param fxmlPath ruta del fxml
     * @param title título de la nueva ventana
+    * @param alert Alerta para indicar si el proceso fue exitoso o no
     * @throws IOException si no encuentra el FXML
     */
-    public static void openNewWindow(String fxmlPath, String title) throws IOException {
+    public static void openNewWindow(String fxmlPath, String title, Alert alert) throws IOException {
         Parent root = FXMLLoader.load(SceneViewManager.class.getResource(fxmlPath) );
         Stage newStage = new Stage();
         newStage.setScene(new Scene(root) );

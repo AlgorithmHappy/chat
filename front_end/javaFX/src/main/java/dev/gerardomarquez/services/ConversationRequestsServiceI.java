@@ -7,5 +7,10 @@ import javafx.scene.control.Alert;
  */
 public interface ConversationRequestsServiceI {
 
-    public Alert sendRequestConversationToUser();
+    /*
+     * Metodo que envia la peticion de conversacion
+     * @param Nombre de usuario
+     * @return Alert que mostrara el exito o error
+     */
+    public Alert sendRequestConversationToUser(String user);
 }

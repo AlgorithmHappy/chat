@@ -289,7 +289,7 @@ public class UsersManagerServiceImplementation implements UsersManagerServiceI{
             .build();
 
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString() );
+            client.send(request, HttpResponse.BodyHandlers.ofString() );
         } catch (IOException | InterruptedException e) {
             log.error(e);
         }

@@ -15,7 +15,7 @@
       <Insets bottom="15.0" left="15.0" right="15.0" />
    </padding>
    <children>
-      <SplitPane dividerPositions="0.25" prefHeight="738.0" prefWidth="1131.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane fx:id="splitPane" dividerPositions="0.25" prefHeight="738.0" prefWidth="1131.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane prefHeight="751.0" prefWidth="409.0">
                <children>

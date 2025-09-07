@@ -25,6 +25,7 @@ public class Constants {
     public static final String PROPIERTIES_REST_PATH_USERS_SIGNUP = "rest.path.users.signUp";
     public static final String PROPIERTIES_REST_PATH_USERS_SIGNIN = "rest.path.users.signIn";
     public static final String PROPIERTIES_REST_PATH_USERS_LOGOUT = "rest.path.users.logOut";
+    public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_SEND = "rest.path.conversation.request.send";
 
     /*
      * Mensajes
@@ -39,6 +40,12 @@ public class Constants {
     public static final String MSG_ERROR_GENERAL_TEXT_DIALOG = "Oops, algo salió mal. Contacta con el administrador para más información.";
     public static final String MSG_ERROR_NET_TEXT_DIALOG = "Oops, no se pudo conectar: revisa tu internet o intenta más tarde.";
     public static final String MSG_ERROR_LOG_ALERT_DIALOG_IS_NOT_PRESENT = "El objeto 'Alert' no esta presnete en el optional.";
+    public static final String MSG_ERROR_DIALOG_USERNAME_BLANK = "No se ha ingresado el nombre de usuario.";
+    public static final String MSG_ERROR_DIALOG_TITLE = "Error en el dato de entrada.";
+    public static final String MSG_DIALOG_TITLE_CONVERSATION_REQUEST = "Envío de solicitud";
+    public static final String MSG_DIALOG_TEXT_CONVERSATION_REQUEST = "Ingrese el nombre de usuario para enviar la solicitud:";
+    public static final String MSG_CONFIRMATION_CONVERSATION_REQUEST_HEADER_ALERT = "Envío de solicitud de conversación.";
+    public static final String MSG_ERROR_CONVERSATION_REQUEST_HEADER_ALERT = "Error en el envío de solicitud de conversación.";
 
     /*
      * Titulos de ventanas
