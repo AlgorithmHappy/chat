@@ -1,5 +1,2 @@
-[2025-09-07 00:42:03] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
-[2025-09-07 00:42:24] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
-[2025-09-07 00:42:29] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
-[2025-09-07 00:42:34] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
-[2025-09-07 00:42:38] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
+[2025-09-07 21:06:53] [ERROR] RequestConversationApiRest - chunked transfer encoding, state: READING_LENGTH
+[2025-09-07 21:06:53] [ERROR] RequestConversationApiRest - GenericResponse(success=false, message=, data=chunked transfer encoding, state: READING_LENGTH)

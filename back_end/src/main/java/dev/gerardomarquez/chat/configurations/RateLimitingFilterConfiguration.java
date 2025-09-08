@@ -72,8 +72,11 @@ public class RateLimitingFilterConfiguration implements Filter {
 
         String uri = httpRequest.getRequestURI();
 
-        if(!(uri.equals(Constants.RATE_LIMIT_PATH_ONE) || uri.equals(Constants.RATE_LIMIT_PATH_TWO) ) ){
+        log.info(capacity);
+
+        if(!Constants.RATE_LIMIT_PATHS.contains(uri) ){
             chain.doFilter(request, response);
+            return;
         }
 
         Bucket bucket = buckets.computeIfAbsent(ip, this::newBucket);

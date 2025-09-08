@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,6 +21,7 @@ import dev.gerardomarquez.utils.Constants;
 import dev.gerardomarquez.utils.UserInformation;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 
 /*
@@ -78,6 +80,22 @@ public class RequestConversationApiRest {
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString() );
 
+            if(response.statusCode() == Response.Status.BAD_REQUEST.getStatusCode() ){
+                GenericResponse<List<String> > genericResponse = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<List<String> > >() {}
+                );
+
+                String strErrors = String.join(System.lineSeparator(), genericResponse.getData() );
+
+                GenericResponse<String> responseError = new GenericResponse<>();
+                responseError.setData(strErrors);
+                responseError.setSuccess(genericResponse.getSuccess() );
+                responseError.setMessage(genericResponse.getMessage() );
+
+                return responseError;
+            }
+            
             GenericResponse<String> genericResponse = mapper.readValue(
                 response.body(),
                 new TypeReference<GenericResponse<String> >() {}
@@ -89,9 +107,11 @@ public class RequestConversationApiRest {
             log.error(e.getMessage() );
 
             GenericResponse<String> genericResponse = new GenericResponse<String>();
-            genericResponse.setData(new String() );
-            genericResponse.setMessage(e.getMessage() );
+            genericResponse.setData(e.getMessage() );
+            genericResponse.setMessage(new String() );
             genericResponse.setSuccess(Boolean.FALSE);
+
+            log.error(genericResponse);
 
             optionalGenericResponse = Optional.of(genericResponse);
         }
@@ -101,6 +121,8 @@ public class RequestConversationApiRest {
             genericResponse.setData(new String() );
             genericResponse.setMessage(new String() );
             genericResponse.setSuccess(Boolean.FALSE);
+
+            log.error("Optional vacio");
         }
 
         return optionalGenericResponse.get();

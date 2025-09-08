@@ -102,10 +102,19 @@ public class ChatController {
             alert.setContentText(Constants.MSG_ERROR_DIALOG_USERNAME_BLANK);
             alert.show();
             return;
-        } else {
-            Alert alert = conversationRequestsService.sendRequestConversationToUser(optionalUserName.get() );
+        } 
+        
+        if(optionalUserName.get().isBlank() ){
+            Alert alert = new Alert(AlertType.ERROR );
+            alert.setTitle(Constants.MSG_ERROR_DIALOG);
+            alert.setHeaderText(Constants.MSG_ERROR_DIALOG_TITLE);
+            alert.setContentText(Constants.MSG_ERROR_DIALOG_USERNAME_BLANK);
             alert.show();
+            return;
         }
+        
+        Alert alert = conversationRequestsService.sendRequestConversationToUser(optionalUserName.get() );
+        alert.show();
 
     }
 }

@@ -1,5 +1,10 @@
 package dev.gerardomarquez.chat.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.jsonwebtoken.lang.Arrays;
+
 /*
  * Clase que contiene las constantes
  */
@@ -18,8 +23,7 @@ public class Constants {
     public static final String MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS = "request.conversation.response.success";
     public static final String MSG_REQUEST_CONVERSATION_SAME_USER = "request.conversation.same.user";
 
-    public static final String RATE_LIMIT_PATH_ONE = "/users/signUp";
-    public static final String RATE_LIMIT_PATH_TWO = "/users/signIn";
+    public static final List<String> RATE_LIMIT_PATHS = Arrays.asList(new String[]{"/users/signUp", "/users/signIn"});
     public static final String UNSECURITY_PATH_ONE = "users/signUp";
     public static final String UNSECURITY_PATH_TWO = "users/signIn";
 

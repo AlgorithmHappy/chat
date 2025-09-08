@@ -44,7 +44,7 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle(Constants.MSG_ERROR_DIALOG);
             alert.setHeaderText(Constants.MSG_ERROR_CONVERSATION_REQUEST_HEADER_ALERT);
-            alert.setContentText(response.getMessage() );
+            alert.setContentText(response.getData() );
 
             return alert;
         }
