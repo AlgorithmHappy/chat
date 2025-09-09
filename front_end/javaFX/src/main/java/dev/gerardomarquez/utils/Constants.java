@@ -46,6 +46,9 @@ public class Constants {
     public static final String MSG_DIALOG_TEXT_CONVERSATION_REQUEST = "Ingrese el nombre de usuario para enviar la solicitud:";
     public static final String MSG_CONFIRMATION_CONVERSATION_REQUEST_HEADER_ALERT = "Envío de solicitud de conversación.";
     public static final String MSG_ERROR_CONVERSATION_REQUEST_HEADER_ALERT = "Error en el envío de solicitud de conversación.";
+    public static final String MSG_ERROR_EMPTY_OPTIONAL = "Optional vacio";
+    public static final String MSG_ERROR_GENERAL = "Oops, se produjo un error inesperado";
+    public static final String MSG_REQUEST_CONVERSATION_SUCCESS = "¡Listo! Petición enviada con éxito.";
 
     /*
      * Titulos de ventanas

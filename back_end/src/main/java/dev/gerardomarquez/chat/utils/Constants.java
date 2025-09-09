@@ -20,7 +20,6 @@ public class Constants {
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND = "exception.request.conversation.found";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_LIMIT_REJECTED = "exception.request.conversation.limit.rejected";
     public static final String MSG_REQUEST_CONVERSATION_MESSAGE = "request.conversation.message";
-    public static final String MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS = "request.conversation.response.success";
     public static final String MSG_REQUEST_CONVERSATION_SAME_USER = "request.conversation.same.user";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE = "exception.request.conversation.found.reverse";
 

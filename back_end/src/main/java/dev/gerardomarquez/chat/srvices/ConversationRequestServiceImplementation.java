@@ -20,6 +20,7 @@ import dev.gerardomarquez.chat.repositories.UsersRepository;
 import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
 import dev.gerardomarquez.chat.requests.SendQueueConversationRequest;
 import dev.gerardomarquez.chat.responses.GenericResponse;
+import dev.gerardomarquez.chat.responses.RequestConversationCreatedResponse;
 import dev.gerardomarquez.chat.utils.Constants;
 
 /*
@@ -239,15 +240,23 @@ public class ConversationRequestServiceImplementation implements ConversationReq
             }
         }
 
+        RequestConversationCreatedResponse requestConversationCreatedResponse = new RequestConversationCreatedResponse(
+            optionalTargetEntity.get().getUsername(),
+            conversationRequestEntity.getStatus(),
+            conversationRequestEntity.getCreatedAt(),
+            conversationRequestEntity.getId()
+        );
+
         GenericResponse response = GenericResponse.builder()
             .success(Boolean.TRUE)
             .message(messageSource.getMessage(Constants.MSG_SUCCESS, null, Locale.getDefault() ) )
-            .data(messageSource.getMessage(
+            /*.data(messageSource.getMessage(
                     Constants.MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS,
                     null,
                     Locale.getDefault() 
                 )
-            )
+            )*/
+            .data(requestConversationCreatedResponse)
             .build();
 
         return response;

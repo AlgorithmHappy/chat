@@ -17,6 +17,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.gerardomarquez.configuration.PropertiesConfiguration;
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
+import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
 import dev.gerardomarquez.utils.Constants;
 import dev.gerardomarquez.utils.UserInformation;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -64,11 +65,11 @@ public class RequestConversationApiRest {
      * @param request Request con los atributos para hacer la peticion
      * @return Response generico con un string
      */
-    public GenericResponse<String> postRequestConversationSend(RequestConversationPost request){
+    public GenericResponse<RequestConversationCreatedResponse> postRequestConversationSend(RequestConversationPost request){
         String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
             .concat(properties.get(Constants.PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_SEND) );
 
-        Optional<GenericResponse<String> > optionalGenericResponse = Optional.empty();
+        Optional<GenericResponse<RequestConversationCreatedResponse> > optionalGenericResponse = Optional.empty();
 
         try {
             HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -80,6 +81,15 @@ public class RequestConversationApiRest {
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString() );
 
+            if(response.statusCode() == Response.Status.OK.getStatusCode() ){
+                GenericResponse<RequestConversationCreatedResponse> successResponse = mapper.readValue(
+                    response.body(),
+                    new TypeReference<GenericResponse<RequestConversationCreatedResponse> >() {}
+                );
+
+                return successResponse;
+            }
+
             if(response.statusCode() == Response.Status.BAD_REQUEST.getStatusCode() ){
                 GenericResponse<List<String> > genericResponse = mapper.readValue(
                     response.body(),
@@ -88,27 +98,52 @@ public class RequestConversationApiRest {
 
                 String strErrors = String.join(System.lineSeparator(), genericResponse.getData() );
 
-                GenericResponse<String> responseError = new GenericResponse<>();
-                responseError.setData(strErrors);
+                GenericResponse<RequestConversationCreatedResponse> responseError = new GenericResponse<>();
+                RequestConversationCreatedResponse data = new RequestConversationCreatedResponse(
+                    new String(),
+                    new String(),
+                    new String(),
+                    new String()
+                );
+                responseError.setData(data);
                 responseError.setSuccess(genericResponse.getSuccess() );
-                responseError.setMessage(genericResponse.getMessage() );
+                responseError.setMessage(strErrors );
 
                 return responseError;
             }
-            
+
             GenericResponse<String> genericResponse = mapper.readValue(
                 response.body(),
                 new TypeReference<GenericResponse<String> >() {}
             );
 
-            optionalGenericResponse = Optional.of(genericResponse);
-            
+            log.error(genericResponse.getMessage() );
+
+            RequestConversationCreatedResponse data = new RequestConversationCreatedResponse(
+                new String(),
+                new String(),
+                new String(),
+                new String()
+            );
+            GenericResponse<RequestConversationCreatedResponse> errorResponse = new GenericResponse<>();
+            errorResponse.setData(data );
+            errorResponse.setMessage(genericResponse.getMessage() );
+            errorResponse.setSuccess(Boolean.FALSE);
+
+            optionalGenericResponse = Optional.of(errorResponse);
+
         } catch (URISyntaxException | IOException | InterruptedException e) {
             log.error(e.getMessage() );
 
-            GenericResponse<String> genericResponse = new GenericResponse<String>();
-            genericResponse.setData(e.getMessage() );
-            genericResponse.setMessage(new String() );
+            RequestConversationCreatedResponse data = new RequestConversationCreatedResponse(
+                    new String(),
+                    new String(),
+                    new String(),
+                    new String()
+                );
+            GenericResponse<RequestConversationCreatedResponse> genericResponse = new GenericResponse<>();
+            genericResponse.setData(data );
+            genericResponse.setMessage( e.getMessage() );
             genericResponse.setSuccess(Boolean.FALSE);
 
             log.error(genericResponse);
@@ -117,12 +152,20 @@ public class RequestConversationApiRest {
         }
 
         if(optionalGenericResponse.isEmpty() ){
-            GenericResponse<String> genericResponse = new GenericResponse<String>();
-            genericResponse.setData(new String() );
-            genericResponse.setMessage(new String() );
+            log.error(Constants.MSG_ERROR_EMPTY_OPTIONAL);
+
+            RequestConversationCreatedResponse data = new RequestConversationCreatedResponse(
+                    new String(),
+                    new String(),
+                    new String(),
+                    new String()
+                );
+            GenericResponse<RequestConversationCreatedResponse> genericResponse = new GenericResponse<>();
+            genericResponse.setData(data);
+            genericResponse.setMessage(Constants.MSG_ERROR_GENERAL );
             genericResponse.setSuccess(Boolean.FALSE);
 
-            log.error("Optional vacio");
+            optionalGenericResponse = Optional.of(genericResponse);
         }
 
         return optionalGenericResponse.get();
