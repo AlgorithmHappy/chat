@@ -18,4 +18,11 @@ public interface ConversationRequestServiceI {
      * @return Response generico
      */
     public GenericResponse insertOneRequestConversation(InsertRequestConversatinRequest requst, String token);
+
+    /*
+     * Metodo que obtiene todas las peticiones de conversaciones de un usuario
+     * @param token Contiene el nombre de usuario de quien envia la peticion.
+     * @return Response generico
+     */
+    public GenericResponse getAllRequestConversation(String token);
 }

@@ -13,7 +13,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Node;
 
 /*
  * Controlador de la vista principal del chat

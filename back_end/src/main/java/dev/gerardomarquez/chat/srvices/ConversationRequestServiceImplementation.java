@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import dev.gerardomarquez.chat.configurations.JwtConfiguration;
@@ -258,6 +260,44 @@ public class ConversationRequestServiceImplementation implements ConversationReq
             )*/
             .data(requestConversationCreatedResponse)
             .build();
+
+        return response;
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public GenericResponse getAllRequestConversation(String token) {
+        String requestedUserName = jwtConfiguration.extractUsername(token);
+
+        UserEntity userEntity = usersRepository.findByUsername(requestedUserName)
+            .orElseThrow(() -> new UsernameNotFoundException(
+                messageSource.getMessage(Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND, new Object[]{ requestedUserName },  Locale.getDefault() )
+            ) 
+        );
+
+        List<ConversationRequestEntity> listConversationEntities = conversationRequestRepository.findAllByRequester(userEntity);
+
+        List<RequestConversationCreatedResponse> listRequestConversations = listConversationEntities.stream()
+            .map(
+                it -> {
+                    RequestConversationCreatedResponse requestConversationCreatedResponse = new RequestConversationCreatedResponse(
+                        it.getTarget().getUsername(),
+                        it.getStatus(),
+                        it.getCreatedAt(),
+                        it.getId()
+                    );
+                    return requestConversationCreatedResponse;
+                }
+            )
+            .collect(Collectors.toList() );
+
+        GenericResponse response = new GenericResponse(
+            Boolean.TRUE,
+            messageSource.getMessage(Constants.MSG_SUCCESS, null, Locale.getDefault() ),
+            listRequestConversations
+        );
 
         return response;
     }

@@ -21,4 +21,22 @@ public record RequestConversationCreatedResponse(
      * Id de la peticion de conversacion
      */
     String id
-) {}
+) {
+    /*
+     * Metodo para que el set valide correctamente si una peticion de conversacion es igual a otra
+     * o no. Que valide solo el id
+     * @param Object objeto cualquiera para comparar
+     * @return Validar si es igual o no
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RequestConversationCreatedResponse miRecord = (RequestConversationCreatedResponse) o;
+        return id == miRecord.id;
+    }
+}

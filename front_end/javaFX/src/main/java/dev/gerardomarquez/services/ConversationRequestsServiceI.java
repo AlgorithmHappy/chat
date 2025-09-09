@@ -1,5 +1,8 @@
 package dev.gerardomarquez.services;
 
+import java.util.List;
+
+import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
 import javafx.scene.control.Alert;
 
 /*
@@ -13,4 +16,11 @@ public interface ConversationRequestsServiceI {
      * @return Alert que mostrara el exito o error
      */
     public Alert sendRequestConversationToUser(String user);
+
+    /*
+     * Metodo que obtiene todas las peticiones de conversacion
+     * @return List<RequestConversationCreatedResponse> lista de peticiones de conversaciones que ha mandado
+     * el usuario
+     */
+    public List<RequestConversationCreatedResponse> getAllRequestsConversations();
 }

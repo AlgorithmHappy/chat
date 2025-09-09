@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 /*
@@ -42,6 +44,18 @@ public class RequestConversationController {
     ) {
         String token = authHeader.substring(Constants.BEARER.length() );
         GenericResponse response = conversationRequestService.insertOneRequestConversation(request, token);
+        return ResponseEntity.ok().body(response);
+    }
+    
+    /*
+     * Metodo para obtener todas la peticiones de conversacion de un usuario
+     * @param authHeader Encabezado con el token de autorizacion
+     * @return Response generico con mensaje de exito
+     */
+    @GetMapping("getAll")
+    public ResponseEntity<GenericResponse> getMethodName(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(Constants.BEARER.length() );
+        GenericResponse response = conversationRequestService.getAllRequestConversation(token);
         return ResponseEntity.ok().body(response);
     }
     

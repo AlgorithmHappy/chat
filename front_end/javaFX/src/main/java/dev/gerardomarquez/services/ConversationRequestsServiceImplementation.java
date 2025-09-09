@@ -1,10 +1,14 @@
 package dev.gerardomarquez.services;
 
+import java.util.List;
+
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
 import dev.gerardomarquez.rest.RequestConversationApiRest;
 import dev.gerardomarquez.utils.Constants;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -12,6 +16,12 @@ import javafx.scene.control.Alert.AlertType;
 * {@inheritDoc}
 */
 public class ConversationRequestsServiceImplementation implements ConversationRequestsServiceI {
+
+    /*
+     * Coleccion que se actualizara automaticamente cuando se eliminen o hayan nuevas peticiones de conversacion
+     */
+    ObservableSet<RequestConversationCreatedResponse> conversationsRequests = FXCollections.observableSet();
+
 
     /*
      * Objeto que hace las peticiones restfull
@@ -49,6 +59,15 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
 
             return alert;
         }
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public List<RequestConversationCreatedResponse> getAllRequestsConversations() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllRequestsConversations'");
     }
 
 }
