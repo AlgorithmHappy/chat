@@ -17,11 +17,16 @@ public class Constants {
     public static final String MSG_EXCEPTION_INVALID_CREDENTIALS = "InsertUserRequest.invalid.credetials";
     public static final String MSG_EXCEPTION_USER_ALREADY_LOGGED = "exception.user.already.logged";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_NAME_NOT_FOUND = "exception.request.conversation.username.notFound";
-    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_PENDING_FOUND = "exception.request.conversation.pending.found";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND = "exception.request.conversation.found";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_LIMIT_REJECTED = "exception.request.conversation.limit.rejected";
     public static final String MSG_REQUEST_CONVERSATION_MESSAGE = "request.conversation.message";
     public static final String MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS = "request.conversation.response.success";
     public static final String MSG_REQUEST_CONVERSATION_SAME_USER = "request.conversation.same.user";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE = "exception.request.conversation.found.reverse";
+
+    public static final String MSG_CONVERSATION_REQUEST_STATUS_ONE = "pendiente";
+    public static final String MSG_CONVERSATION_REQUEST_STATUS_TWO = "recivida";
+    public static final String MSG_CONVERSATION_REQUEST_STATUS_THREE = "aceptada";
 
     public static final List<String> RATE_LIMIT_PATHS = Arrays.asList(new String[]{"/users/signUp", "/users/signIn"});
     public static final String UNSECURITY_PATH_ONE = "users/signUp";
@@ -39,8 +44,9 @@ public class Constants {
      * Constantes del estatus de peticiones conversaciones
      */
     public static final String CONVERSATION_REQUEST_STATUS_ONE = "pending";
-    public static final String CONVERSATION_REQUEST_STATUS_TWO = "accepted";
-    public static final String CONVERSATION_REQUEST_STATUS_THREE = "rejected";
+    public static final String CONVERSATION_REQUEST_STATUS_TWO = "received";
+    public static final String CONVERSATION_REQUEST_STATUS_THREE = "accepted";
+    public static final String CONVERSATION_REQUEST_STATUS_FOUR = "rejected";
 
     // Limite de rechazos para no volver a recivir solucitudes de conversacion
     public static final Long CONVERSATION_REQUEST_LIMIT = 3L;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,9 @@ public class ConversationRequestServiceImplementation implements ConversationReq
      * Objeto que gestiona los mensajes
      */
     private final MessageSource messageSource;
+
+    @Value("${jwt.hours.time}")
+    private Integer hoursSession;
 
     /*
      * Constructor que inyecta las variables con spring
@@ -111,18 +115,42 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         Boolean areTherePendings = listConversationRequest.stream()
             .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) );
 
+        Boolean areThereReceived = listConversationRequest.stream()
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO ) );
+
+        Boolean areThereAcepted = listConversationRequest.stream()
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_THREE ) );
+
         if(areTherePendings){
             throw new TooManyConversationRequestsException(
                 messageSource.getMessage(
-                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_PENDING_FOUND,
-                    null,
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_ONE },
+                    Locale.getDefault()
+                )
+            );
+        }
+        if(areThereReceived){
+            throw new TooManyConversationRequestsException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_TWO },
+                    Locale.getDefault()
+                )
+            );
+        }
+        if(areThereAcepted){
+            throw new TooManyConversationRequestsException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_THREE },
                     Locale.getDefault()
                 )
             );
         }
 
         Long countRejected = listConversationRequest.stream()
-            .filter(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_THREE) )
+            .filter(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_FOUR) )
             .count();
 
         if(countRejected > Constants.CONVERSATION_REQUEST_LIMIT){
@@ -135,6 +163,49 @@ public class ConversationRequestServiceImplementation implements ConversationReq
             );
         }
 
+        /*
+         * Validar si hay una request de conversacion a la inversa, ya que no puede mandar una peticion
+         * de conversacion si ya la recivio antes
+         */
+        List<ConversationRequestEntity> listConversationRequestInverse = conversationRequestRepository
+            .findAllByRequesterAndTarget(optionalTargetEntity.get(), optionalRequestedEntity.get() );
+        areTherePendings = listConversationRequestInverse.stream()
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) );
+        areThereAcepted = listConversationRequestInverse.stream()
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO ) );
+        areThereReceived = listConversationRequestInverse.stream()
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO ) );
+        if(areTherePendings){
+            throw new TooManyConversationRequestsException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_ONE },
+                    Locale.getDefault()
+                )
+            );
+        }
+        if(areThereReceived){
+            throw new TooManyConversationRequestsException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_TWO },
+                    Locale.getDefault()
+                )
+            );
+        }
+        if(areThereAcepted){
+            throw new TooManyConversationRequestsException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE,
+                    new Object[]{ Constants.MSG_CONVERSATION_REQUEST_STATUS_THREE },
+                    Locale.getDefault()
+                )
+            );
+        }
+        /*
+         * Fin
+         */
+
         LocalDateTime now = LocalDateTime.now();
 
         ConversationRequestEntity conversationRequestEntity = ConversationRequestEntity.builder()
@@ -146,19 +217,27 @@ public class ConversationRequestServiceImplementation implements ConversationReq
 
         conversationRequestRepository.save(conversationRequestEntity);
 
-        SendQueueConversationRequest sendQueueRequest = SendQueueConversationRequest.builder()
-            .message(
-                messageSource.getMessage(
-                    Constants.MSG_REQUEST_CONVERSATION_MESSAGE,
-                    new Object[] {requestedUserName},
-                    Locale.getDefault()
-                )
-            )
-            .date(now)
-            .fromUserName(requestedUserName)
-            .build();
+        if(
+            optionalTargetEntity.get().getLastLogin() != null
+        ){
+            LocalDateTime sessionExpired = optionalTargetEntity.get().getLastLogin().plusHours(hoursSession);
+            if(LocalDateTime.now().isBefore(sessionExpired) ){ // Mandar mensaje asincrono en el caso de que
+                //este conectado ahora, si no esperar a que se conecte y obtene las peticiones de forma sincrona
+                SendQueueConversationRequest sendQueueRequest = SendQueueConversationRequest.builder()
+                    .message(
+                        messageSource.getMessage(
+                            Constants.MSG_REQUEST_CONVERSATION_MESSAGE,
+                            new Object[] {requestedUserName},
+                            Locale.getDefault()
+                        )
+                    )
+                    .date(now)
+                    .fromUserName(requestedUserName)
+                    .build();
 
-        conversationRequestJms.sendQueueToUsuer(sendQueueRequest, optionalTargetEntity.get().getId().toString() );
+                conversationRequestJms.sendQueueToUsuer(sendQueueRequest, optionalTargetEntity.get().getId().toString() );
+            }
+        }
 
         GenericResponse response = GenericResponse.builder()
             .success(Boolean.TRUE)

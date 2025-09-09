@@ -87,7 +87,7 @@ COMMENT ON COLUMN "conversation_requests"."requester_id" IS 'Usuario que envía 
 
 COMMENT ON COLUMN "conversation_requests"."target_id" IS 'Usuario que recibe la solicitud';
 
-COMMENT ON COLUMN "conversation_requests"."status" IS 'Estado de la solicitud: pending, accepted o rejected';
+COMMENT ON COLUMN "conversation_requests"."status" IS 'Estado de la solicitud: pending, received, accepted o rejected';
 
 COMMENT ON COLUMN "conversation_requests"."created_at" IS 'Fecha y hora en que se creó la solicitud';
 

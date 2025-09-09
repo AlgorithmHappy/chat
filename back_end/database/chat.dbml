@@ -35,7 +35,7 @@ Table conversation_requests {
   id uuid [pk, note: 'UUID único de la solicitud']
   requester_id uuid [not null, ref: > users.id, note: 'Usuario que envía la solicitud de conversación']
   target_id uuid [not null, ref: > users.id, note: 'Usuario que recibe la solicitud']
-  status varchar(20) [not null, default: 'pending', note: 'Estado de la solicitud: pending, accepted o rejected']
+  status varchar(20) [not null, default: 'pending', note: 'Estado de la solicitud: pending, received, accepted o rejected']
   created_at timestamp [not null, default: `now()`, note: 'Fecha y hora en que se creó la solicitud']
 
   Note: 'Tabla que registra las solicitudes de conversación entre usuarios.'
