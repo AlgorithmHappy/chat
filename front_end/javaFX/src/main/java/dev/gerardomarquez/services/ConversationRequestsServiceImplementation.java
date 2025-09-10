@@ -1,6 +1,8 @@
 package dev.gerardomarquez.services;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
@@ -20,7 +22,7 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
     /*
      * Coleccion que se actualizara automaticamente cuando se eliminen o hayan nuevas peticiones de conversacion
      */
-    ObservableSet<RequestConversationCreatedResponse> conversationsRequests = FXCollections.observableSet();
+    ObservableSet<RequestConversationCreatedResponse> conversationsRequests;
 
 
     /*
@@ -33,6 +35,7 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
      */
     public ConversationRequestsServiceImplementation(){
         this.requestConversationApiRest = new RequestConversationApiRest();
+        this.conversationsRequests = FXCollections.observableSet();
     }
 
     /*
@@ -65,9 +68,11 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
     * {@inheritDoc}
     */
     @Override
-    public List<RequestConversationCreatedResponse> getAllRequestsConversations() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllRequestsConversations'");
+    public ObservableSet<RequestConversationCreatedResponse> getAllRequestsConversations() {
+        GenericResponse<List<RequestConversationCreatedResponse> > response = requestConversationApiRest.getAll();
+        Set<RequestConversationCreatedResponse> setRequestConversation = new HashSet<>(response.getData() );
+        this.conversationsRequests.addAll(setRequestConversation);
+        return this.conversationsRequests;
     }
 
 }

@@ -11,6 +11,7 @@ public class Constants {
     public static final String PATH_RESOURCES_PROPERTIES = "/config.properties";
     public static final String PATH_RESOURCES_VIEW_LOGIN = "/dev/gerardomarquez/Login.fxml";
     public static final String PATH_RESOURCES_VIEW_CHAT = "/dev/gerardomarquez/Chat.fxml";
+    public static final String PATH_RESOURCES_COMPONENT_CONVERSATION_REQUEST_SENDED = "/dev/gerardomarquez/LoginConversationRequestSended.fxml";
 
     /*
      * Errores
@@ -26,6 +27,7 @@ public class Constants {
     public static final String PROPIERTIES_REST_PATH_USERS_SIGNIN = "rest.path.users.signIn";
     public static final String PROPIERTIES_REST_PATH_USERS_LOGOUT = "rest.path.users.logOut";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_SEND = "rest.path.conversation.request.send";
+    public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL = "rest.path.conversation.request.getAll";
 
     /*
      * Mensajes
@@ -59,4 +61,6 @@ public class Constants {
     public static final Integer HTTP_STATUS_CODE_UNPROCESSABLE_ENTITY = 422;
 
     public static final String BEARER = "Bearer ";
+
+    public static final Double VIEW_CHAT_SPLIT_POSITION = 0.273;
 }

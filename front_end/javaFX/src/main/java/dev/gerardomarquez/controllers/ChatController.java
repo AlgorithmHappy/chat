@@ -2,9 +2,16 @@ package dev.gerardomarquez.controllers;
 
 import java.util.Optional;
 
+import dev.gerardomarquez.components.ConversationRequestCellComponent;
+import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
 import dev.gerardomarquez.services.ConversationRequestsServiceI;
 import dev.gerardomarquez.services.ConversationRequestsServiceImplementation;
 import dev.gerardomarquez.utils.Constants;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -37,18 +44,33 @@ public class ChatController {
     @FXML
     private Button buttonSendMessage;
 
+    /*
+     * ListView de las conversaciones
+     */
     @FXML
     private ListView<?> listViewConversations;
 
+    /*
+     * ListView del chat
+     */
     @FXML
     private ListView<?> listViewMessages;
 
+    /*
+     * ListView de las peticiones de conversaciones recividas
+     */
     @FXML
     private ListView<?> listViewRequestConversationRecived;
 
+    /*
+     * ListView de las peticiones de conversacion enviadas
+     */
     @FXML
-    private ListView<?> listViewRequestConversationSended;
+    private ListView<RequestConversationCreatedResponse> listViewRequestConversationSended;
 
+    /*
+     * Input text donde el usuario puede escribir su mensaje
+     */
     @FXML
     private TextArea textAreaMessage;
 
@@ -60,18 +82,26 @@ public class ChatController {
     @FXML
     private void initialize() {
         this.conversationRequestsService = new ConversationRequestsServiceImplementation();
-
-        // Fijamos divisor en 30%
-        splitPane.setDividerPositions(0.25);
-
-        // Obtenemos el primer divisor (en este caso solo hay uno)
+        splitPane.setDividerPositions(Constants.VIEW_CHAT_SPLIT_POSITION);
         SplitPane.Divider divider = splitPane.getDividers().get(0);
-
-        // Evitamos que el usuario lo mueva
         divider.positionProperty().addListener((obs, oldVal, newVal) -> {
-            divider.setPosition(0.3);
+            divider.setPosition(Constants.VIEW_CHAT_SPLIT_POSITION);
         });
 
+        ObservableSet<RequestConversationCreatedResponse> set = conversationRequestsService.getAllRequestsConversations();
+        ObservableList<RequestConversationCreatedResponse> list = FXCollections.observableArrayList(set);
+        listViewRequestConversationSended.setItems(list);
+
+        // Listener para sincronizar ObservableSet con ListView
+        set.addListener((SetChangeListener<RequestConversationCreatedResponse>) change -> {
+            Platform.runLater(() -> {
+                if (change.wasAdded()) list.add(change.getElementAdded());
+                if (change.wasRemoved()) list.remove(change.getElementRemoved());
+            });
+        });
+
+        // Celda personalizada con FXML
+        listViewRequestConversationSended.setCellFactory(lv -> new ConversationRequestCellComponent(conversationRequestsService));
     }
 
     /*

@@ -1,8 +1,7 @@
 package dev.gerardomarquez.services;
 
-import java.util.List;
-
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
+import javafx.collections.ObservableSet;
 import javafx.scene.control.Alert;
 
 /*
@@ -18,9 +17,10 @@ public interface ConversationRequestsServiceI {
     public Alert sendRequestConversationToUser(String user);
 
     /*
-     * Metodo que obtiene todas las peticiones de conversacion
-     * @return List<RequestConversationCreatedResponse> lista de peticiones de conversaciones que ha mandado
+     * Metodo que obtiene todas las peticiones de conversacion en un obserbable
+     * @return ObservableSet<RequestConversationCreatedResponse> lista de peticiones de conversaciones que ha mandado
      * el usuario
      */
-    public List<RequestConversationCreatedResponse> getAllRequestsConversations();
+    public ObservableSet<RequestConversationCreatedResponse> getAllRequestsConversations();
+
 }
