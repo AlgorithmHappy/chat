@@ -25,4 +25,11 @@ public interface ConversationRequestServiceI {
      * @return Response generico
      */
     public GenericResponse getAllRequestConversation(String token);
+
+    /*
+     * Metodo que elimina una peticion de conversacion
+     * @param token Contiene el nombre de usuario de quien envia la peticion.
+     * @param requestConversationId Contiene el id en tipo string.
+     */
+    public void deleteOneRequestConversation(String token, String requestConversationId);
 }

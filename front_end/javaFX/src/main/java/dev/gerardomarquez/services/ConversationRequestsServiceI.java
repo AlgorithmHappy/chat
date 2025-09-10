@@ -23,4 +23,10 @@ public interface ConversationRequestsServiceI {
      */
     public ObservableSet<RequestConversationCreatedResponse> getAllRequestsConversations();
 
+    /*
+     * Metodo que elimina una peticion de conversacion a partir de su id
+     * @param requestConversation Peticion de conversacion que contiene el id
+     */
+    public void deleteOneRequesConversation(RequestConversationCreatedResponse requestConversation);
+
 }

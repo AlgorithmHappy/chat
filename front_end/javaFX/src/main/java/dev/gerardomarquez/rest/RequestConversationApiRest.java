@@ -266,4 +266,36 @@ public class RequestConversationApiRest {
         );
         return errorResponse;
     }
+
+    /*
+     * Metodo que borra una peticion de conversacion
+     * @param id de la peticion que se quiere borrar
+     */
+    public void deleteOne(String id){
+        String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
+            .concat(properties.get(Constants.PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_DELETE_ONE)
+            .concat(id)
+        );
+
+        Optional<URI> optUri = Optional.empty();
+        try {
+            optUri = Optional.of(new URI(strUri) );
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage() );
+            return;
+        }
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+            .uri(optUri.get() )
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, Constants.BEARER.concat(userInformation.getToken() ) )
+            .DELETE()
+            .build();
+
+        try {
+            client.send(httpRequest, HttpResponse.BodyHandlers.ofString() );
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage() );
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package dev.gerardomarquez.chat.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.jsonwebtoken.lang.Arrays;
@@ -22,6 +21,8 @@ public class Constants {
     public static final String MSG_REQUEST_CONVERSATION_MESSAGE = "request.conversation.message";
     public static final String MSG_REQUEST_CONVERSATION_SAME_USER = "request.conversation.same.user";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE = "exception.request.conversation.found.reverse";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_NOT_FOUND = "exception.request.conversation.NotFound";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_USER = "exception.request.conversation.UnauthorizedUser";
 
     public static final String MSG_CONVERSATION_REQUEST_STATUS_ONE = "pendiente";
     public static final String MSG_CONVERSATION_REQUEST_STATUS_TWO = "recivida";

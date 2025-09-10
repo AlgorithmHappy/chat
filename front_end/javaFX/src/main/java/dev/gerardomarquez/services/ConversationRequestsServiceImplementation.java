@@ -47,6 +47,8 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
         request.setUserNameTarget(user);
         GenericResponse<RequestConversationCreatedResponse> response = requestConversationApiRest.postRequestConversationSend(request);
 
+        conversationsRequests.add(response.getData() );
+
         if(response.getSuccess() ){
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle(Constants.MSG_CONFIRMATION_DIALOG);
@@ -73,6 +75,15 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
         Set<RequestConversationCreatedResponse> setRequestConversation = new HashSet<>(response.getData() );
         this.conversationsRequests.addAll(setRequestConversation);
         return this.conversationsRequests;
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void deleteOneRequesConversation(RequestConversationCreatedResponse requestConversation) {
+        requestConversationApiRest.deleteOne(requestConversation.id() );
+        this.conversationsRequests.remove(requestConversation);
     }
 
 }

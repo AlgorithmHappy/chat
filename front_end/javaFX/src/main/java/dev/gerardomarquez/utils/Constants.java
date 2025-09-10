@@ -28,6 +28,7 @@ public class Constants {
     public static final String PROPIERTIES_REST_PATH_USERS_LOGOUT = "rest.path.users.logOut";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_SEND = "rest.path.conversation.request.send";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL = "rest.path.conversation.request.getAll";
+    public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_DELETE_ONE = "rest.path.conversation.request.deleteOne";
 
     /*
      * Mensajes
@@ -51,6 +52,9 @@ public class Constants {
     public static final String MSG_ERROR_EMPTY_OPTIONAL = "Optional vacio";
     public static final String MSG_ERROR_GENERAL = "Oops, se produjo un error inesperado";
     public static final String MSG_REQUEST_CONVERSATION_SUCCESS = "¡Listo! Petición enviada con éxito.";
+    public static final String MSG_ALERT_TITLE_CONVERSATION_REQUEST_DELETE = "Eliminar solicitud de conversación";
+    public static final String MSG_ALERT_HEADER_CONVERSATION_REQUEST_DELETE = "Atención: Estás a punto de eliminar una solicitud.";
+    public static final String MSG_ALERT_CONTENT_CONVERSATION_REQUEST_DELETE = "¿Estás seguro de que deseas eliminar esta solicitud? Se borrará para ambas partes de la conversación.";
 
     /*
      * Titulos de ventanas

@@ -3,6 +3,7 @@ package dev.gerardomarquez.chat.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -38,7 +40,7 @@ public class RequestConversationController {
      * @return Response generico con mensaje de exito
      */
     @PostMapping("send")
-    public ResponseEntity<GenericResponse> postMethodName(
+    public ResponseEntity<GenericResponse> postOneConversationRequestByUserToUser(
         @RequestHeader("Authorization") String authHeader,
         @Valid @RequestBody InsertRequestConversatinRequest request
     ) {
@@ -53,10 +55,19 @@ public class RequestConversationController {
      * @return Response generico con mensaje de exito
      */
     @GetMapping("getAll")
-    public ResponseEntity<GenericResponse> getMethodName(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<GenericResponse> getAllConversationRequestByUser(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(Constants.BEARER.length() );
         GenericResponse response = conversationRequestService.getAllRequestConversation(token);
         return ResponseEntity.ok().body(response);
     }
-    
+
+    @DeleteMapping("deleteOne")
+    public ResponseEntity<Void> getMethodName(
+        @RequestHeader("Authorization") String authHeader,
+        @RequestParam(name = "id", required = false) String id
+    ) {
+        String token = authHeader.substring(Constants.BEARER.length() );
+        conversationRequestService.deleteOneRequestConversation(token, id);
+        return ResponseEntity.noContent().build();
+    }
 }

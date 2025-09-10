@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import dev.gerardomarquez.chat.configurations.JwtConfiguration;
 import dev.gerardomarquez.chat.enitities.ConversationRequestEntity;
 import dev.gerardomarquez.chat.enitities.UserEntity;
+import dev.gerardomarquez.chat.exceptions.RequestConversationNotFoundException;
+import dev.gerardomarquez.chat.exceptions.RequestConversationUserUnauthorizedException;
 import dev.gerardomarquez.chat.exceptions.SameUserToRequestException;
 import dev.gerardomarquez.chat.exceptions.TooManyConversationRequestsException;
 import dev.gerardomarquez.chat.jms.ConversationRequestJmsI;
@@ -300,6 +303,40 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         );
 
         return response;
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void deleteOneRequestConversation(String token, String requestConversationId) {
+        String requestedUserName = jwtConfiguration.extractUsername(token);
+        Optional<ConversationRequestEntity> optConversationRequest = conversationRequestRepository
+            .findById(UUID.fromString(requestConversationId) );
+
+        if(optConversationRequest.isEmpty() ){
+            throw new RequestConversationNotFoundException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_NOT_FOUND, 
+                    null,
+                    Locale.getDefault()   
+                )
+            );
+        }
+
+        UserEntity userRequester = optConversationRequest.get().getRequester();
+
+        if(!userRequester.getUsername().equals(requestedUserName) ){
+            throw new RequestConversationUserUnauthorizedException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_USER, 
+                    null,
+                    Locale.getDefault()
+                )
+            );
+        }
+
+        conversationRequestRepository.delete(optConversationRequest.get() );
     }
 
 }
