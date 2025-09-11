@@ -7,13 +7,16 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.gerardomarquez.chat.requests.DeleteConversationToTarget;
 import dev.gerardomarquez.chat.requests.SendQueueConversationRequest;
 import dev.gerardomarquez.chat.utils.Constants;
+import lombok.extern.log4j.Log4j2;
 
 /*
  * {@Inheritdock}
  */
 @Service
+@Log4j2
 public class ConversationRequestJmsImplementation implements ConversationRequestJmsI {
 
     /*
@@ -46,20 +49,36 @@ public class ConversationRequestJmsImplementation implements ConversationRequest
     * {@inheritDoc}
     */
     @Override
-    public void sendQueueToUsuer(SendQueueConversationRequest requestQueue, String usernameId) {
+    public void sendRequestConversationQueueToUsuer(SendQueueConversationRequest requestQueue, String usernameId) {
         String strRequest = new String();
         try {
             strRequest = objectMapper.writeValueAsString(requestQueue);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage() );
         }
 
         jmsTemplate.convertAndSend(queueName, strRequest, msg -> {
-            msg.setStringProperty(Constants.JMS_PROPERTI_KEY_ID_USER, usernameId); // propiedad custom
+            msg.setStringProperty(Constants.JMS_PROPERTI_KEY_ID_USER, usernameId);
             return msg;
         });
     
     }
 
-    
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void sendRequestConversationQueueToUsuer(DeleteConversationToTarget requestConversationId, String targetId) {
+        String strRequest = new String();
+        try {
+            strRequest = objectMapper.writeValueAsString(requestConversationId);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage() );
+        }
+        jmsTemplate.convertAndSend(queueName, strRequest, msg -> {
+            msg.setStringProperty(Constants.JMS_PROPERTI_KEY_ID_USER, targetId);
+            return msg;
+        });
+    }
+
 }

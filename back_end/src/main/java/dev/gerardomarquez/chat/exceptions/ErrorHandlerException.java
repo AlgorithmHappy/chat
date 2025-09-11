@@ -195,4 +195,63 @@ public class ErrorHandlerException {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
+
+    /*
+     * Metodo que controla la excepcion cuando se quieren borrar una solicitud de conversacion de un id que no
+     * existe
+     * @param RequestConversationNotFoundException excepcion que se lanza cuando la peticion de conversacion no
+     * fue encontrada por su id
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(RequestConversationNotFoundException.class)
+    public ResponseEntity<GenericResponse> handleRequestConversationNotFound(RequestConversationNotFoundException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /*
+     * Metodo que controla la excepcion cuando se quiere borrar una solicitud de conversacion de un usuario quien no creo
+     * dicha solicitud
+     * @param RequestConversationUserUnauthorizedException excepcion lanzada cuando un usuario quiere borrar una peticion
+     * de conversacion que no fue cread por el 
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(RequestConversationUserUnauthorizedException.class)
+    public ResponseEntity<GenericResponse> handleRequestConversationUserUnauthorized(RequestConversationUserUnauthorizedException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    /*
+     * Metodo que controla la excepcion cuando se quiere borrar una solicitud de conversacion de un estatud no permitido
+     * @param RequestConversationStatusUnauthorizedException excepcion lanzada cuando un usuario quiere borrar una peticion
+     * de conversacion de un estatus no permitido (aceptada o rechazada)
+     * @return Response generico con los errores
+     */
+    @ExceptionHandler(RequestConversationStatusUnauthorizedException.class)
+    public ResponseEntity<GenericResponse> handleRequestConversationStatusUnauthorized(RequestConversationStatusUnauthorizedException ex) {
+        GenericResponse response = GenericResponse.builder()
+            .message(ex.getMessage() )
+            .success(Boolean.FALSE)
+            .data(ex.getMessage() )
+            .build();
+
+        log.error(response );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
 }

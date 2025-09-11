@@ -23,6 +23,7 @@ public class Constants {
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_FOUND_REVERSE = "exception.request.conversation.found.reverse";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_NOT_FOUND = "exception.request.conversation.NotFound";
     public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_USER = "exception.request.conversation.UnauthorizedUser";
+    public static final String MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_STATUS = "exception.request.conversation.UnauthorizedStatus";
 
     public static final String MSG_CONVERSATION_REQUEST_STATUS_ONE = "pendiente";
     public static final String MSG_CONVERSATION_REQUEST_STATUS_TWO = "recivida";

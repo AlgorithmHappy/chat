@@ -16,12 +16,14 @@ import dev.gerardomarquez.chat.configurations.JwtConfiguration;
 import dev.gerardomarquez.chat.enitities.ConversationRequestEntity;
 import dev.gerardomarquez.chat.enitities.UserEntity;
 import dev.gerardomarquez.chat.exceptions.RequestConversationNotFoundException;
+import dev.gerardomarquez.chat.exceptions.RequestConversationStatusUnauthorizedException;
 import dev.gerardomarquez.chat.exceptions.RequestConversationUserUnauthorizedException;
 import dev.gerardomarquez.chat.exceptions.SameUserToRequestException;
 import dev.gerardomarquez.chat.exceptions.TooManyConversationRequestsException;
 import dev.gerardomarquez.chat.jms.ConversationRequestJmsI;
 import dev.gerardomarquez.chat.repositories.ConversationRequestRepository;
 import dev.gerardomarquez.chat.repositories.UsersRepository;
+import dev.gerardomarquez.chat.requests.DeleteConversationToTarget;
 import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
 import dev.gerardomarquez.chat.requests.SendQueueConversationRequest;
 import dev.gerardomarquez.chat.responses.GenericResponse;
@@ -40,7 +42,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
     private final JwtConfiguration jwtConfiguration;
 
     /*
-     * Clase para enviar la el mensaje a la cola JMS del las peticiones de conversacion
+     * Clase para enviar el mensaje a la cola JMS del las peticiones de conversacion
      */
     private final ConversationRequestJmsI conversationRequestJms;
 
@@ -241,7 +243,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
                     .fromUserName(requestedUserName)
                     .build();
 
-                conversationRequestJms.sendQueueToUsuer(sendQueueRequest, optionalTargetEntity.get().getId().toString() );
+                conversationRequestJms.sendRequestConversationQueueToUsuer(sendQueueRequest, optionalTargetEntity.get().getId().toString() );
             }
         }
 
@@ -255,12 +257,6 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         GenericResponse response = GenericResponse.builder()
             .success(Boolean.TRUE)
             .message(messageSource.getMessage(Constants.MSG_SUCCESS, null, Locale.getDefault() ) )
-            /*.data(messageSource.getMessage(
-                    Constants.MSG_REQUEST_CONVERSATION_RESPONSE_SUCCESS,
-                    null,
-                    Locale.getDefault() 
-                )
-            )*/
             .data(requestConversationCreatedResponse)
             .build();
 
@@ -336,7 +332,35 @@ public class ConversationRequestServiceImplementation implements ConversationReq
             );
         }
 
+        if(
+            !(
+                optConversationRequest.get().getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) ||
+                optConversationRequest.get().getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO)
+            )
+        ){
+            throw new RequestConversationStatusUnauthorizedException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_STATUS, 
+                    null,
+                    Locale.getDefault()
+                )
+            );
+        }
+
         conversationRequestRepository.delete(optConversationRequest.get() );
+
+        if(optConversationRequest.get().getTarget().getLastLogin() != null){
+            if(optConversationRequest.get().getTarget().getLastLogin().plusHours(hoursSession).isBefore(LocalDateTime.now() ) ){
+                DeleteConversationToTarget deleteConversationToTarget = new DeleteConversationToTarget(
+                    optConversationRequest.get().getId().toString()
+                );
+
+                conversationRequestJms.sendRequestConversationQueueToUsuer(
+                    deleteConversationToTarget,
+                    optConversationRequest.get().getTarget().getId().toString()
+                );
+            }
+        }
     }
 
 }
