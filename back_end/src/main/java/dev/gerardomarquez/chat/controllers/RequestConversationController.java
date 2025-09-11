@@ -57,7 +57,7 @@ public class RequestConversationController {
     @GetMapping("getAll")
     public ResponseEntity<GenericResponse> getAllConversationRequestByUser(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(Constants.BEARER.length() );
-        GenericResponse response = conversationRequestService.getAllRequestConversation(token);
+        GenericResponse response = conversationRequestService.getAllRequestConversationByRequester(token);
         return ResponseEntity.ok().body(response);
     }
 
@@ -69,5 +69,12 @@ public class RequestConversationController {
         String token = authHeader.substring(Constants.BEARER.length() );
         conversationRequestService.deleteOneRequestConversation(token, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("getAllReceived")
+    public ResponseEntity<GenericResponse> getAllConversationRequestReceivedByUser(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(Constants.BEARER.length() );
+        GenericResponse response = conversationRequestService.getAllRequestConversationByTarget(token);
+        return ResponseEntity.ok().body(response);
     }
 }

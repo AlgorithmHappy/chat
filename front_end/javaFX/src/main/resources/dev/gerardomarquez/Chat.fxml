@@ -21,7 +21,7 @@
                <children>
                   <Button fx:id="buttonConversationRequest" mnemonicParsing="false" onAction="#buttonConversationRequestOnAction" text="Mandar solicitud a un amigo" AnchorPane.bottomAnchor="710.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
                   <ListView fx:id="listViewRequestConversationSended" prefHeight="165.0" prefWidth="301.0" AnchorPane.bottomAnchor="497.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="89.0" />
-                  <ListView fx:id="listViewRequestConversationRecived" prefHeight="165.0" prefWidth="301.0" AnchorPane.bottomAnchor="281.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="305.0" />
+                  <ListView fx:id="listViewRequestConversationReceived" prefHeight="165.0" prefWidth="301.0" AnchorPane.bottomAnchor="281.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="305.0" />
                   <ListView fx:id="listViewConversations" layoutX="15.0" layoutY="555.0" prefHeight="181.0" prefWidth="301.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="518.0" />
                   <Label alignment="CENTER" prefHeight="18.0" prefWidth="134.0" text="Solicitudes enviadas" textAlignment="CENTER" AnchorPane.bottomAnchor="677.0" AnchorPane.leftAnchor="99.0" AnchorPane.rightAnchor="98.0" AnchorPane.topAnchor="56.0">
                      <font>

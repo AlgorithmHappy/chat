@@ -12,6 +12,7 @@ public class Constants {
     public static final String PATH_RESOURCES_VIEW_LOGIN = "/dev/gerardomarquez/Login.fxml";
     public static final String PATH_RESOURCES_VIEW_CHAT = "/dev/gerardomarquez/Chat.fxml";
     public static final String PATH_RESOURCES_COMPONENT_CONVERSATION_REQUEST_SENDED = "/dev/gerardomarquez/LoginConversationRequestSended.fxml";
+    public static final String PATH_RESOURCES_COMPONENT_CONVERSATION_REQUEST_RECEIVED = "/dev/gerardomarquez/LoginConversationRequestReceived.fxml";
 
     /*
      * Errores
@@ -29,6 +30,7 @@ public class Constants {
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_SEND = "rest.path.conversation.request.send";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL = "rest.path.conversation.request.getAll";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_DELETE_ONE = "rest.path.conversation.request.deleteOne";
+    public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL_RECEIVED = "rest.path.conversation.request.getAllReceived";
 
     /*
      * Mensajes
@@ -67,4 +69,6 @@ public class Constants {
     public static final String BEARER = "Bearer ";
 
     public static final Double VIEW_CHAT_SPLIT_POSITION = 0.273;
+
+    public static final Integer ITEM_WRAPPER_PADDING = 5;
 }

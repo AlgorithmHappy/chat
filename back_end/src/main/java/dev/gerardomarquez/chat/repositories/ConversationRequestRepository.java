@@ -30,4 +30,11 @@ public interface ConversationRequestRepository extends JpaRepository<Conversatio
      * @return Lista de peticiones de conversaciones
      */
     public List<ConversationRequestEntity> findAllByRequester(UserEntity requester);
+
+    /*
+     * Metodo que encuentra todos los request de un usuario "target"
+     * @param target Variable con el uuid del usuario a quien le llega el request
+     * @return Lista de peticiones de conversaciones
+     */
+    public List<ConversationRequestEntity> findAllByTarget(UserEntity target);
 }

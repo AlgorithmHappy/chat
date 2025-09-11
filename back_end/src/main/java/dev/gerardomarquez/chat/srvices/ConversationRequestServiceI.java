@@ -20,11 +20,11 @@ public interface ConversationRequestServiceI {
     public GenericResponse insertOneRequestConversation(InsertRequestConversatinRequest requst, String token);
 
     /*
-     * Metodo que obtiene todas las peticiones de conversaciones de un usuario
+     * Metodo que obtiene todas las peticiones de conversaciones de un usuario "requester"
      * @param token Contiene el nombre de usuario de quien envia la peticion.
      * @return Response generico
      */
-    public GenericResponse getAllRequestConversation(String token);
+    public GenericResponse getAllRequestConversationByRequester(String token);
 
     /*
      * Metodo que elimina una peticion de conversacion
@@ -32,4 +32,11 @@ public interface ConversationRequestServiceI {
      * @param requestConversationId Contiene el id en tipo string.
      */
     public void deleteOneRequestConversation(String token, String requestConversationId);
+
+    /*
+     * Metodo que obtiene todas las peticiones de conversaciones de un usuario "target"
+     * @param token Contiene el nombre de usuario de quien se recive la peticion.
+     * @return Response generico
+     */
+    public GenericResponse getAllRequestConversationByTarget(String token);
 }

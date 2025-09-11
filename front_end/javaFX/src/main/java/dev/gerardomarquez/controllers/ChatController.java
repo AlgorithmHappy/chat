@@ -3,7 +3,9 @@ package dev.gerardomarquez.controllers;
 import java.util.Optional;
 
 import dev.gerardomarquez.components.ConversationRequestCellComponent;
+import dev.gerardomarquez.components.ConversationRequestReceivedCellComponent;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
+import dev.gerardomarquez.responses.RequestConversationReceivedResponse;
 import dev.gerardomarquez.services.ConversationRequestsServiceI;
 import dev.gerardomarquez.services.ConversationRequestsServiceImplementation;
 import dev.gerardomarquez.utils.Constants;
@@ -69,6 +71,12 @@ public class ChatController {
     private ListView<RequestConversationCreatedResponse> listViewRequestConversationSended;
 
     /*
+     * ListView de las peticiones de conversacion recibidas
+     */
+    @FXML
+    private ListView<RequestConversationReceivedResponse> listViewRequestConversationReceived;
+
+    /*
      * Input text donde el usuario puede escribir su mensaje
      */
     @FXML
@@ -88,20 +96,48 @@ public class ChatController {
             divider.setPosition(Constants.VIEW_CHAT_SPLIT_POSITION);
         });
 
-        ObservableSet<RequestConversationCreatedResponse> set = conversationRequestsService.getAllRequestsConversations();
-        ObservableList<RequestConversationCreatedResponse> list = FXCollections.observableArrayList(set);
-        listViewRequestConversationSended.setItems(list);
+        ObservableSet<RequestConversationCreatedResponse> setConversationSended = conversationRequestsService
+            .getAllRequestsConversationsSended();
+        ObservableList<RequestConversationCreatedResponse> listConversationSended = FXCollections
+            .observableArrayList(setConversationSended);
+        listViewRequestConversationSended.setItems(listConversationSended);
 
-        // Listener para sincronizar ObservableSet con ListView
-        set.addListener((SetChangeListener<RequestConversationCreatedResponse>) change -> {
-            Platform.runLater(() -> {
-                if (change.wasAdded()) list.add(change.getElementAdded());
-                if (change.wasRemoved()) list.remove(change.getElementRemoved());
-            });
-        });
+        setConversationSended.addListener(
+            (SetChangeListener<RequestConversationCreatedResponse>) change -> {
+                Platform.runLater(
+                    () -> {
+                        if (change.wasAdded() ) listConversationSended.add(change.getElementAdded() );
+                        if (change.wasRemoved() ) listConversationSended.remove(change.getElementRemoved() );
+                    }
+                );
+            }
+        );
 
-        // Celda personalizada con FXML
-        listViewRequestConversationSended.setCellFactory(lv -> new ConversationRequestCellComponent(conversationRequestsService));
+        listViewRequestConversationSended.setCellFactory(
+            lv -> new ConversationRequestCellComponent(conversationRequestsService)
+        );
+
+
+        ObservableSet<RequestConversationReceivedResponse> setConversationReceived = conversationRequestsService
+            .getAllRequestsConversationsReceived();
+        ObservableList<RequestConversationReceivedResponse> listConversationReceived = FXCollections
+            .observableArrayList(setConversationReceived);
+        listViewRequestConversationReceived.setItems(listConversationReceived);
+
+        setConversationReceived.addListener(
+            (SetChangeListener<RequestConversationReceivedResponse>) change -> {
+                Platform.runLater(
+                    () -> {
+                        if (change.wasAdded()) listConversationReceived.add(change.getElementAdded() );
+                        if (change.wasRemoved()) listConversationReceived.remove(change.getElementRemoved() );
+                    }
+                );
+            }
+        );
+
+        listViewRequestConversationReceived.setCellFactory(
+            lv -> new ConversationRequestReceivedCellComponent(conversationRequestsService)
+        );
     }
 
     /*

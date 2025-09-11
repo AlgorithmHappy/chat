@@ -20,6 +20,7 @@ import dev.gerardomarquez.configuration.PropertiesConfiguration;
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
+import dev.gerardomarquez.responses.RequestConversationReceivedResponse;
 import dev.gerardomarquez.utils.Constants;
 import dev.gerardomarquez.utils.UserInformation;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -177,8 +178,8 @@ public class RequestConversationApiRest {
     }
 
     /*
-     * Metodo que realiza una peticion get para devolver todas las peticiones de conversacion del usuario actual
-     * @return Response generico con un string
+     * Metodo que realiza una peticion get para devolver todas las peticiones de conversacion del usuario actual "requester"
+     * @return Response generico con una lista de RequestConversationCreatedResponse
      */
     public GenericResponse<List<RequestConversationCreatedResponse> > getAll(){
         String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
@@ -297,5 +298,96 @@ public class RequestConversationApiRest {
         } catch (IOException | InterruptedException e) {
             log.error(e.getMessage() );
         }
+    }
+
+    /*
+     * Metodo que realiza una peticion get para devolver todas las peticiones de conversacion del usuario "target"
+     * @return Response generico con una lista de RequestConversationReceivedResponse
+     */
+    public GenericResponse<List<RequestConversationReceivedResponse> > getAllByTarget(){
+        String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
+            .concat(properties.get(Constants.PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL_RECEIVED) );
+
+        String error = new String();
+
+        Optional<URI> optUri = Optional.empty();
+        try {
+            optUri = Optional.of(new URI(strUri) );
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage() );
+            error = e.getMessage();
+        }
+
+        if(optUri.isEmpty() ){
+            List<RequestConversationReceivedResponse> listErrorRequestConversation = new ArrayList<>();
+
+            GenericResponse<List<RequestConversationReceivedResponse> > errorResponse = new GenericResponse<>(
+                Boolean.FALSE,
+                error,
+                listErrorRequestConversation
+            );
+
+            return errorResponse;
+        }
+
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+            .uri(optUri.get() )
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, Constants.BEARER.concat(userInformation.getToken() ) )
+            .GET()
+            .build();
+
+        Optional<HttpResponse<String> > optResponse = Optional.empty();
+        try {
+            optResponse = Optional.of(client.send(httpRequest, HttpResponse.BodyHandlers.ofString() ) );
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage() );
+            error = e.getMessage();
+        }
+
+        if(optResponse.isEmpty() ){
+            List<RequestConversationReceivedResponse> listErrorRequestConversation = new ArrayList<>();
+
+            GenericResponse<List<RequestConversationReceivedResponse> > errorResponse = new GenericResponse<>(
+                Boolean.FALSE,
+                error,
+                listErrorRequestConversation
+            );
+
+            return errorResponse;
+        }
+        
+        try {
+            if(optResponse.get().statusCode() == Response.Status.OK.getStatusCode() ){
+                GenericResponse<List<RequestConversationReceivedResponse> > successResponse;
+                
+                successResponse = mapper.readValue(
+                    optResponse.get().body(),
+                    new TypeReference<GenericResponse<List<RequestConversationReceivedResponse> > >() {}
+                );
+
+                return successResponse;
+            }
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage() );
+            error = e.getMessage();
+            List<RequestConversationReceivedResponse> listErrorRequestConversation = new ArrayList<>();
+            GenericResponse<List<RequestConversationReceivedResponse> > errorResponse = new GenericResponse<>(
+                Boolean.FALSE,
+                error,
+                listErrorRequestConversation
+            );
+
+            return errorResponse;
+        }
+
+        List<RequestConversationReceivedResponse> listErrorRequestConversation = new ArrayList<>();
+        GenericResponse<List<RequestConversationReceivedResponse> > errorResponse = new GenericResponse<>(
+            Boolean.FALSE,
+            Constants.MSG_ERROR_GENERAL,
+            listErrorRequestConversation
+        );
+        return errorResponse;
     }
 }

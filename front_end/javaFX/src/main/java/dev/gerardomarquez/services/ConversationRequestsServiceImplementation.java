@@ -7,6 +7,7 @@ import java.util.Set;
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
+import dev.gerardomarquez.responses.RequestConversationReceivedResponse;
 import dev.gerardomarquez.rest.RequestConversationApiRest;
 import dev.gerardomarquez.utils.Constants;
 import javafx.collections.FXCollections;
@@ -21,8 +22,15 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
 
     /*
      * Coleccion que se actualizara automaticamente cuando se eliminen o hayan nuevas peticiones de conversacion
+     * enviadas
      */
-    ObservableSet<RequestConversationCreatedResponse> conversationsRequests;
+    ObservableSet<RequestConversationCreatedResponse> conversationsRequestsSended;
+
+    /*
+     * Coleccion que se actualizara automaticamente cuando se eliminen o hayan nuevas peticiones de conversacion
+     * recibidas
+     */
+    ObservableSet<RequestConversationReceivedResponse> conversationsRequestsReceived;
 
 
     /*
@@ -35,7 +43,8 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
      */
     public ConversationRequestsServiceImplementation(){
         this.requestConversationApiRest = new RequestConversationApiRest();
-        this.conversationsRequests = FXCollections.observableSet();
+        this.conversationsRequestsSended = FXCollections.observableSet();
+        this.conversationsRequestsReceived = FXCollections.observableSet();
     }
 
     /*
@@ -47,7 +56,7 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
         request.setUserNameTarget(user);
         GenericResponse<RequestConversationCreatedResponse> response = requestConversationApiRest.postRequestConversationSend(request);
 
-        conversationsRequests.add(response.getData() );
+        conversationsRequestsSended.add(response.getData() );
 
         if(response.getSuccess() ){
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -70,11 +79,11 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
     * {@inheritDoc}
     */
     @Override
-    public ObservableSet<RequestConversationCreatedResponse> getAllRequestsConversations() {
+    public ObservableSet<RequestConversationCreatedResponse> getAllRequestsConversationsSended() {
         GenericResponse<List<RequestConversationCreatedResponse> > response = requestConversationApiRest.getAll();
         Set<RequestConversationCreatedResponse> setRequestConversation = new HashSet<>(response.getData() );
-        this.conversationsRequests.addAll(setRequestConversation);
-        return this.conversationsRequests;
+        this.conversationsRequestsSended.addAll(setRequestConversation);
+        return this.conversationsRequestsSended;
     }
 
     /*
@@ -83,7 +92,18 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
     @Override
     public void deleteOneRequesConversation(RequestConversationCreatedResponse requestConversation) {
         requestConversationApiRest.deleteOne(requestConversation.id() );
-        this.conversationsRequests.remove(requestConversation);
+        this.conversationsRequestsSended.remove(requestConversation);
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public ObservableSet<RequestConversationReceivedResponse> getAllRequestsConversationsReceived() {
+        GenericResponse<List<RequestConversationReceivedResponse> > response = requestConversationApiRest.getAllByTarget();
+        Set<RequestConversationReceivedResponse> setRequestConversation = new HashSet<>(response.getData() );
+        this.conversationsRequestsReceived.addAll(setRequestConversation);
+        return this.conversationsRequestsReceived;
     }
 
 }

@@ -28,6 +28,7 @@ import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
 import dev.gerardomarquez.chat.requests.SendQueueConversationRequest;
 import dev.gerardomarquez.chat.responses.GenericResponse;
 import dev.gerardomarquez.chat.responses.RequestConversationCreatedResponse;
+import dev.gerardomarquez.chat.responses.RequestConversationRecivedResponse;
 import dev.gerardomarquez.chat.utils.Constants;
 
 /*
@@ -267,7 +268,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
     * {@inheritDoc}
     */
     @Override
-    public GenericResponse getAllRequestConversation(String token) {
+    public GenericResponse getAllRequestConversationByRequester(String token) {
         String requestedUserName = jwtConfiguration.extractUsername(token);
 
         UserEntity userEntity = usersRepository.findByUsername(requestedUserName)
@@ -361,6 +362,50 @@ public class ConversationRequestServiceImplementation implements ConversationReq
                 );
             }
         }
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public GenericResponse getAllRequestConversationByTarget(String token) {
+        String requestedUserName = jwtConfiguration.extractUsername(token);
+
+        UserEntity userEntity = usersRepository.findByUsername(requestedUserName)
+            .orElseThrow(() -> new UsernameNotFoundException(
+                messageSource.getMessage(Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND, new Object[]{ requestedUserName },  Locale.getDefault() )
+            ) 
+        );
+
+        List<ConversationRequestEntity> listConversationRequest = conversationRequestRepository.findAllByTarget(userEntity);
+
+        List<RequestConversationRecivedResponse> listRequestConversationsReceived = listConversationRequest.stream()
+            .filter(
+                it -> {
+                    return 
+                        it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) ||
+                        it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO);
+                }
+            )
+            .map(
+                it -> {
+                    RequestConversationRecivedResponse requestConversationRecivedResponse = new RequestConversationRecivedResponse(
+                        it.getRequester().getUsername(),
+                        it.getCreatedAt(),
+                        it.getId()
+                    );
+                    return requestConversationRecivedResponse;
+                }
+            )
+            .collect(Collectors.toList() );
+
+        GenericResponse response = new GenericResponse(
+            Boolean.TRUE,
+            messageSource.getMessage(Constants.MSG_SUCCESS, null, Locale.getDefault() ),
+            listRequestConversationsReceived
+        );
+
+        return response;
     }
 
 }
