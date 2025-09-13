@@ -2,6 +2,7 @@ package dev.gerardomarquez.chat.srvices;
 
 import org.springframework.stereotype.Service;
 
+import dev.gerardomarquez.chat.requests.ChangeStatusRequestConversationRequest;
 import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
 import dev.gerardomarquez.chat.responses.GenericResponse;
 
@@ -39,4 +40,12 @@ public interface ConversationRequestServiceI {
      * @return Response generico
      */
     public GenericResponse getAllRequestConversationByTarget(String token);
+
+    /*
+     * Metodo que cambia el estado de una peticion de conversacion
+     * @param token Contiene el nombre de usuario de quien se recive la peticion.
+     * @param request Contiene el id de la peticion y el nuevo estado
+     * @return Response generico
+     */
+    public void putOneRequestConversationById(String token, ChangeStatusRequestConversationRequest request);
 }

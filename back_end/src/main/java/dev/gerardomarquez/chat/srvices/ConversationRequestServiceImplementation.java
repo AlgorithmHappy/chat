@@ -23,6 +23,7 @@ import dev.gerardomarquez.chat.exceptions.TooManyConversationRequestsException;
 import dev.gerardomarquez.chat.jms.ConversationRequestJmsI;
 import dev.gerardomarquez.chat.repositories.ConversationRequestRepository;
 import dev.gerardomarquez.chat.repositories.UsersRepository;
+import dev.gerardomarquez.chat.requests.ChangeStatusRequestConversationRequest;
 import dev.gerardomarquez.chat.requests.DeleteConversationToTarget;
 import dev.gerardomarquez.chat.requests.InsertRequestConversatinRequest;
 import dev.gerardomarquez.chat.requests.SendQueueConversationRequest;
@@ -181,7 +182,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         areTherePendings = listConversationRequestInverse.stream()
             .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) );
         areThereAcepted = listConversationRequestInverse.stream()
-            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO ) );
+            .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_THREE ) );
         areThereReceived = listConversationRequestInverse.stream()
             .anyMatch(it -> it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO ) );
         if(areTherePendings){
@@ -280,6 +281,13 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         List<ConversationRequestEntity> listConversationEntities = conversationRequestRepository.findAllByRequester(userEntity);
 
         List<RequestConversationCreatedResponse> listRequestConversations = listConversationEntities.stream()
+            .filter(
+                it -> {
+                    return 
+                        it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_ONE ) ||
+                        it.getStatus().equals(Constants.CONVERSATION_REQUEST_STATUS_TWO);
+                }
+            )
             .map(
                 it -> {
                     RequestConversationCreatedResponse requestConversationCreatedResponse = new RequestConversationCreatedResponse(
@@ -391,6 +399,7 @@ public class ConversationRequestServiceImplementation implements ConversationReq
                 it -> {
                     RequestConversationRecivedResponse requestConversationRecivedResponse = new RequestConversationRecivedResponse(
                         it.getRequester().getUsername(),
+                        it.getStatus(),
                         it.getCreatedAt(),
                         it.getId()
                     );
@@ -406,6 +415,51 @@ public class ConversationRequestServiceImplementation implements ConversationReq
         );
 
         return response;
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void putOneRequestConversationById(String token, ChangeStatusRequestConversationRequest request) {
+        String userName = jwtConfiguration.extractUsername(token);
+
+        UserEntity userEntity = usersRepository.findByUsername(userName)
+            .orElseThrow(() -> new UsernameNotFoundException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_USERNAME_NOT_FOUND,
+                    new Object[]{ userName },
+                    Locale.getDefault()
+                )
+            ) 
+        );
+
+        Optional<ConversationRequestEntity> optConversationRequest = conversationRequestRepository
+            .findById(UUID.fromString(request.requestConversationId() ) );
+
+        if(optConversationRequest.isEmpty() ){
+            throw new RequestConversationNotFoundException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_NOT_FOUND, 
+                    null,
+                    Locale.getDefault()   
+                )
+            );
+        }
+
+        if(!optConversationRequest.get().getTarget().getUsername().equals(userName) ){
+            throw new RequestConversationUserUnauthorizedException(
+                messageSource.getMessage(
+                    Constants.MSG_EXCEPTION_REQUEST_CONVERSATION_UNAUTHORIZED_USER, 
+                    null,
+                    Locale.getDefault()
+                )
+            );
+        }
+
+        ConversationRequestEntity conversationRequestEntity = optConversationRequest.get();
+        conversationRequestEntity.setStatus(request.status() );
+        conversationRequestRepository.save(conversationRequestEntity);
     }
 
 }

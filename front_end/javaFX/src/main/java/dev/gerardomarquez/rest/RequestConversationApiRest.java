@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import dev.gerardomarquez.configuration.PropertiesConfiguration;
+import dev.gerardomarquez.requests.ChangeStatusRequestConversationRequest;
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
@@ -389,5 +390,49 @@ public class RequestConversationApiRest {
             listErrorRequestConversation
         );
         return errorResponse;
+    }
+
+    /*
+     * Metodo que cambia el estado de una peticion de conversacion
+     * @param request Objeto con los datos para cambiar el estado
+     */
+    public void putOneStatus(ChangeStatusRequestConversationRequest request){
+        String strUri = properties.get(Constants.PROPIERTIES_REST_URL)
+            .concat(properties.get(Constants.PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_PUT_STATUS) );
+
+        Optional<URI> optUri = Optional.empty();
+        try {
+            optUri = Optional.of(new URI(strUri) );
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage() );
+            return;
+        }
+
+        Optional<HttpRequest> httpRequest = Optional.empty();
+
+        try {
+            httpRequest = Optional.of(
+                HttpRequest.newBuilder()
+                    .uri(optUri.get() )
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, Constants.BEARER.concat(userInformation.getToken() ) )
+                    .PUT(
+                        HttpRequest.BodyPublishers.ofString(
+                            mapper.writeValueAsString(request)
+                        )
+                    )
+                    .build()
+                );
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage() );
+            return;
+        }
+
+        try {
+            client.send(httpRequest.get(), HttpResponse.BodyHandlers.ofString() );
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage() );
+            return;
+        }
     }
 }

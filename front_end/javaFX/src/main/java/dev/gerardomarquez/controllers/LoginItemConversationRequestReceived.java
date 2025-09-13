@@ -1,9 +1,15 @@
 package dev.gerardomarquez.controllers;
 
+import java.util.Optional;
+
 import dev.gerardomarquez.responses.RequestConversationReceivedResponse;
 import dev.gerardomarquez.services.ConversationRequestsServiceI;
+import dev.gerardomarquez.utils.Constants;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 
 /*
@@ -65,7 +71,19 @@ public class LoginItemConversationRequestReceived {
      */
     @FXML
     public void buttonAceptOnAction() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle(Constants.MSG_ALERT_TITLE_CONVERSATION_REQUEST_ACEPTED);
+        alert.setHeaderText(Constants.MSG_ALERT_HEADER_CONVERSATION_REQUEST_ACEPTED);
+        alert.setContentText(Constants.MSG_ALERT_CONTENT_CONVERSATION_REQUEST_ACEPTED);
 
+        Optional<ButtonType> result = alert.showAndWait();
+        
+        if(result.isPresent() && result.get() == ButtonType.OK){
+            this.conversationRequestService.putStatusRequestConversationsReceived(
+                this.conversationRequest.id(),
+                Constants.StatusRequestConversation.ACCEPTED.getValue()
+            );
+        }
     }
 
     /*
@@ -73,7 +91,19 @@ public class LoginItemConversationRequestReceived {
      */
     @FXML
     public void buttonRejectOnAction() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle(Constants.MSG_ALERT_TITLE_CONVERSATION_REQUEST_REJECTED);
+        alert.setHeaderText(Constants.MSG_ALERT_HEADER_CONVERSATION_REQUEST_REJECTED);
+        alert.setContentText(Constants.MSG_ALERT_CONTENT_CONVERSATION_REQUEST_REJECTED);
 
+        Optional<ButtonType> result = alert.showAndWait();
+        
+        if(result.isPresent() && result.get() == ButtonType.OK){
+            this.conversationRequestService.putStatusRequestConversationsReceived(
+                this.conversationRequest.id(),
+                Constants.StatusRequestConversation.REJECTED.getValue()
+            );
+        }
     }
 
 }

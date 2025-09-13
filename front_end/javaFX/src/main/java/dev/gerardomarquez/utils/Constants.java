@@ -31,6 +31,7 @@ public class Constants {
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL = "rest.path.conversation.request.getAll";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_DELETE_ONE = "rest.path.conversation.request.deleteOne";
     public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_GET_ALL_RECEIVED = "rest.path.conversation.request.getAllReceived";
+    public static final String PROPIERTIES_REST_PATH_CONVERSATION_REQUEST_PUT_STATUS = "rest.path.conversation.request.putStatus";
 
     /*
      * Mensajes
@@ -57,6 +58,13 @@ public class Constants {
     public static final String MSG_ALERT_TITLE_CONVERSATION_REQUEST_DELETE = "Eliminar solicitud de conversación";
     public static final String MSG_ALERT_HEADER_CONVERSATION_REQUEST_DELETE = "Atención: Estás a punto de eliminar una solicitud.";
     public static final String MSG_ALERT_CONTENT_CONVERSATION_REQUEST_DELETE = "¿Estás seguro de que deseas eliminar esta solicitud? Se borrará para ambas partes de la conversación.";
+    public static final String MSG_ALERT_TITLE_CONVERSATION_REQUEST_ACEPTED = "Cambio de estado de solicitud de conversación";
+    public static final String MSG_ALERT_HEADER_CONVERSATION_REQUEST_ACEPTED = "Atención: Estás a punto de aceptar una solicitud.";
+    public static final String MSG_ALERT_CONTENT_CONVERSATION_REQUEST_ACEPTED = "¿Estás seguro de que deseas aceptar esta solicitud? Se añadirá a tu lista de conversaciones.";
+    public static final String MSG_ALERT_TITLE_CONVERSATION_REQUEST_REJECTED = "Cambio de estado de solicitud de conversación";
+    public static final String MSG_ALERT_HEADER_CONVERSATION_REQUEST_REJECTED = "Atención: Estás a punto de rechazar una solicitud.";
+    public static final String MSG_ALERT_CONTENT_CONVERSATION_REQUEST_REJECTED = "¿Estás seguro de que deseas rechazar esta solicitud? Se eliminará de tu lista de recibidos.";
+
 
     /*
      * Titulos de ventanas
@@ -71,4 +79,35 @@ public class Constants {
     public static final Double VIEW_CHAT_SPLIT_POSITION = 0.273;
 
     public static final Integer ITEM_WRAPPER_PADDING = 5;
+
+    public enum StatusRequestConversation {
+        PENDING("pending"),
+        REJECTED("rejected"),
+        ACCEPTED("accepted"),
+        RECEIVED("received");
+
+        private final String value;
+
+        StatusRequestConversation(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value; // así devuelve directamente la cadena
+        }
+
+        public static StatusRequestConversation fromString(String value) {
+            for (StatusRequestConversation e : StatusRequestConversation.values() ) {
+                if (e.value.equalsIgnoreCase(value)) {
+                    return e;
+                }
+            }
+            throw new IllegalArgumentException("Estado inválido: " + value);
+        }
+    }
 }

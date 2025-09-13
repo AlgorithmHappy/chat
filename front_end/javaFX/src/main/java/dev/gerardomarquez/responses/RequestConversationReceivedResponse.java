@@ -11,6 +11,11 @@ public record RequestConversationReceivedResponse (
     String requesterUserName,
 
     /*
+     * Estado de la peticion (PENDIENTE, ACEPTADA, RECHAZADA, CANCELADA)
+     */
+    String status,
+
+    /*
      * Fecha en formato dd/mm/yyyy HH:mm:ss
      */
     String date,

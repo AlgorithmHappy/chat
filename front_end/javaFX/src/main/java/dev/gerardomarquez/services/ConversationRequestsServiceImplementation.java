@@ -3,7 +3,9 @@ package dev.gerardomarquez.services;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import dev.gerardomarquez.requests.ChangeStatusRequestConversationRequest;
 import dev.gerardomarquez.requests.RequestConversationPost;
 import dev.gerardomarquez.responses.GenericResponse;
 import dev.gerardomarquez.responses.RequestConversationCreatedResponse;
@@ -56,7 +58,9 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
         request.setUserNameTarget(user);
         GenericResponse<RequestConversationCreatedResponse> response = requestConversationApiRest.postRequestConversationSend(request);
 
-        conversationsRequestsSended.add(response.getData() );
+        if(!response.getData().id().isEmpty() ){
+            conversationsRequestsSended.add(response.getData() );
+        }
 
         if(response.getSuccess() ){
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -103,7 +107,41 @@ public class ConversationRequestsServiceImplementation implements ConversationRe
         GenericResponse<List<RequestConversationReceivedResponse> > response = requestConversationApiRest.getAllByTarget();
         Set<RequestConversationReceivedResponse> setRequestConversation = new HashSet<>(response.getData() );
         this.conversationsRequestsReceived.addAll(setRequestConversation);
+        for(RequestConversationReceivedResponse req : setRequestConversation){
+            if(req.status().equals(Constants.StatusRequestConversation.PENDING.getValue() ) ){
+                this.putStatusRequestConversationsReceived(req.id(), Constants.StatusRequestConversation.RECEIVED.getValue() );
+            }
+        }
         return this.conversationsRequestsReceived;
+    }
+
+    /*
+    * {@inheritDoc}
+    */
+    @Override
+    public void putStatusRequestConversationsReceived(String id, String status) {
+        ChangeStatusRequestConversationRequest changeStatusRequestConversation = new ChangeStatusRequestConversationRequest(
+            id,
+            status
+        );
+        requestConversationApiRest.putOneStatus(changeStatusRequestConversation);
+
+        this.conversationsRequestsReceived.forEach(
+            req -> {
+                if(req.id().equals(id) ){
+                    this.conversationsRequestsReceived.remove(req);
+                    if(status.equals(Constants.StatusRequestConversation.REJECTED.getValue() ) ) return;
+                    if(status.equals(Constants.StatusRequestConversation.ACCEPTED.getValue() ) ) return;
+                    RequestConversationReceivedResponse updatedReq = new RequestConversationReceivedResponse(
+                        req.requesterUserName(),
+                        status,
+                        req.date(),
+                        req.id()
+                    );
+                    this.conversationsRequestsReceived.add(updatedReq);
+                }
+            }
+        );
     }
 
 }

@@ -37,4 +37,15 @@ public interface ConversationRequestsServiceI {
      */
     public ObservableSet<RequestConversationReceivedResponse> getAllRequestsConversationsReceived();
 
+    /*
+     * Metodo que cambia el estado de una peticion de conversacion
+     * @param id Id de la peticion de conversacion
+     * @param status Nuevo estado de la peticion de conversacion
+     * status puede ser: pending, rejected, accepted o received
+     */
+    public void putStatusRequestConversationsReceived(
+        String id,
+        String status
+    );
+
 }
